@@ -1,0 +1,11 @@
+# Target labels
+ libbpf
+# Source files and their labels
+/tmp/tmp.GOCnimAV23/cmake-build-debug/bpftools/CMakeFiles/libbpf-build
+/tmp/tmp.GOCnimAV23/cmake-build-debug/bpftools/CMakeFiles/libbpf-build.rule
+/tmp/tmp.GOCnimAV23/cmake-build-debug/bpftools/libbpf/src/libbpf-stamp/libbpf-build.rule
+/tmp/tmp.GOCnimAV23/cmake-build-debug/bpftools/libbpf/src/libbpf-stamp/libbpf-configure.rule
+/tmp/tmp.GOCnimAV23/cmake-build-debug/bpftools/libbpf/src/libbpf-stamp/libbpf-update.rule
+/tmp/tmp.GOCnimAV23/cmake-build-debug/bpftools/libbpf/src/libbpf-stamp/libbpf-patch.rule
+/tmp/tmp.GOCnimAV23/cmake-build-debug/bpftools/libbpf/src/libbpf-stamp/libbpf-download.rule
+/tmp/tmp.GOCnimAV23/cmake-build-debug/bpftools/libbpf/src/libbpf-stamp/libbpf-mkdir.rule

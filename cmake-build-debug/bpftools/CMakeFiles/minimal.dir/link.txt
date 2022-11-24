@@ -1,0 +1,2 @@
+/usr/bin/ar qc libminimal.a  CMakeFiles/minimal.dir/minimal.c.o
+/usr/bin/ranlib libminimal.a

@@ -45,13 +45,25 @@ find_package(BpfObject REQUIRED)
 
 # Create an executable for each application
 file(GLOB apps *.bpf.c)
+SET(skel_list)
 foreach(app ${apps})
     get_filename_component(app_stem ${app} NAME_WE)
 
     # Build object skeleton and depend skeleton on libbpf build
     bpf_object(${app_stem} ${app_stem}.bpf.c)
     add_dependencies(${app_stem}_skel libbpf-build)
-    add_executable(${app_stem} ${app_stem}.cc)
+    #add_executable(${app_stem} ${app_stem}.cc)
     #add_library(${app_stem} ${app_stem}.c)
-    target_link_libraries(${app_stem} ${app_stem}_skel Nanolog)
+    #target_link_libraries(${app_stem} ${app_stem}_skel Nanolog)
+    list(APPEND skel_list ${app_stem}_skel)
 endforeach()
+
+string(REPLACE ";" " " SKEL_LIST "${skel_list}")
+SET(BPF_SRC
+        process_monitor.cc
+        common.cc)
+
+add_library(bpftools ${BPF_SRC})
+target_link_libraries(bpftools ${skel_list} Nanolog rt)
+#target_link_libraries(bpftools ${skel_list} rt)
+

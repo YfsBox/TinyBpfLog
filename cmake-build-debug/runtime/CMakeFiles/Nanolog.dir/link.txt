@@ -1,0 +1,2 @@
+/usr/bin/ar qc libNanolog.a  CMakeFiles/Nanolog.dir/RuntimeLogger.cc.o CMakeFiles/Nanolog.dir/Cycles.cc.o CMakeFiles/Nanolog.dir/Log.cc.o CMakeFiles/Nanolog.dir/NanoLog.cc.o CMakeFiles/Nanolog.dir/PerfHelper.cc.o CMakeFiles/Nanolog.dir/TimeTrace.cc.o CMakeFiles/Nanolog.dir/Util.cc.o
+/usr/bin/ranlib libNanolog.a

@@ -18,6 +18,6 @@ struct event {
     char comm[TASK_COMM_LEN];
     char filename[MAX_FILENAME_LEN];
     bool exit_event;
-};
+};  // 对于pid和ppid来说,一般是pid或者ppid等于多少
 
 #endif //TINYBPFLOG_PROCESS_H

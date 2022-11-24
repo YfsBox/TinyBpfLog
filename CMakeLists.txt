@@ -30,7 +30,6 @@ add_subdirectory(src)
 add_subdirectory(demos)
 
 
-
 add_executable(main main.cpp)
-# target_link_libraries(main Nanolog process)
+target_link_libraries(main bpftools)
 
