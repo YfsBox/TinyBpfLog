@@ -1,2 +1,0 @@
-/usr/bin/ar qc libbpftools.a  CMakeFiles/bpftools.dir/process_monitor.cc.o CMakeFiles/bpftools.dir/common.cc.o
-/usr/bin/ranlib libbpftools.a
