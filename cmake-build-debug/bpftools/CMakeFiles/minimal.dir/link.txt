@@ -1,1 +1,0 @@
-g++  -g -Wall -std=c++17 -D_PTHREADS -Wno-unused-parameter -O3 -O3  -rdynamic CMakeFiles/minimal.dir/minimal.cc.o  -o minimal  ../runtime/libNanolog.a libbpf/libbpf.a -lelf -lz -lpthread -lrt -lgtest 
