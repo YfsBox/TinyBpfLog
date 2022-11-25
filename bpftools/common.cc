@@ -16,7 +16,6 @@ void bump_memlock_rlimit(void)
             .rlim_cur	= RLIM_INFINITY,
             .rlim_max	= RLIM_INFINITY,
     };
-
     if (setrlimit(RLIMIT_MEMLOCK, &rlim_new)) {
         fprintf(stderr, "Failed to increase RLIMIT_MEMLOCK limit!\n");
         exit(1);

@@ -30,6 +30,6 @@ add_subdirectory(src)
 add_subdirectory(demos)
 
 
-add_executable(main main.cpp src/utils.h)
-target_link_libraries(main bpftools)
+add_executable(main main.cpp)
+target_link_libraries(main srces)
 

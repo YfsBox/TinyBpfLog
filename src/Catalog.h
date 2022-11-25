@@ -15,15 +15,16 @@ class Catalog {
 public:
 
     using MonitorMap = std::unordered_map<uint32_t, std::unique_ptr<Monitor>>;
-    using MonitorTypeMap = std::unordered_map<std::string, Monitor::MonitorType>;
+    using MonitorTypeMap = std::unordered_map<std::string, MonitorType>;
 
     static Catalog& getInstance() {
         static Catalog catalog;
         return catalog;
     }
-
-    void ShowMonitors() const;
-    bool AddMonitor(const std::string typestr, const std::string logname);
+    void Init(const std::string &output);
+    void Stop();
+    uint32_t ShowMonitors() const;
+    bool AddMonitor(const std::string &typestr);
     bool StartMonitor(uint32_t monitorId);
     bool StopAndRemoveMonitor(uint32_t monitorId);
 
@@ -33,11 +34,13 @@ private:
     Catalog& operator = (const Catalog &catalog) = delete;
 
     static const uint32_t MAX_MONITORS_SIZE = 20;
+    bool isRunning_;
     std::mutex mutex_;
+    std::string outputFile_;
     MonitorMap monitorMap_;
     MonitorTypeMap monitorTypeMap_ = {
-            {"process", Monitor::MonitorType::PROCESS},
-            {"syscall", Monitor::MonitorType::SYSCALL},
+            {"process", MonitorType::PROCESS},
+            {"syscall", MonitorType::SYSCALL},
     };
 };
 

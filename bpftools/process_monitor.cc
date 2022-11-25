@@ -1,7 +1,7 @@
 //
 // Created by 杨丰硕 on 2022/11/24.
 //
-#include "process_monitor.h"
+#include "monitors.h"
 #include "process.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
@@ -12,7 +12,7 @@ static void sig_handler(int sig) {
 }
 
 int process_handle_event(void *ctx, void *data, size_t data_sz) {
-    struct event *e = (struct event *) data;
+    auto e = reinterpret_cast<struct event*>(data);
     struct tm *tm;
     char ts[32];
     time_t t;
@@ -22,14 +22,10 @@ int process_handle_event(void *ctx, void *data, size_t data_sz) {
     strftime(ts, sizeof(ts), "%H:%M:%S", tm);
 
     if (e->exit_event) {
-        printf("%-8s %-5s %-16s %-7d %-7d [%u]",
-                 ts, "EXIT", e->comm, e->pid, e->ppid, e->exit_code);
-        if (e->duration_ns) {
-            printf(" (%llums)", e->duration_ns / 1000000);
-        }
-        printf("\n");
+        NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d [%u] (%llums)",
+                 ts, "EXIT", e->comm, e->pid, e->ppid, e->exit_code, e->duration_ns / 1000000);
     } else {
-        printf("%-8s %-5s %-16s %-7d %-7d %s\n",
+        NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d %s",
                  ts, "EXEC", e->comm, e->pid, e->ppid, e->filename);
     }
     return 0;
@@ -82,7 +78,7 @@ int start_process_monitor(ring_buffer_sample_fn handle_event) {
         goto cleanup;
     }
     /* Process events */
-    printf("%-8s %-5s %-16s %-7s %-7s %s\n",
+    NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7s %-7s %s\n",
            "TIME", "EVENT", "COMM", "PID", "PPID", "FILENAME/EXIT CODE");
     while (!exiting) {
         err = ring_buffer__poll(rb, 100 /* timeout, ms */);

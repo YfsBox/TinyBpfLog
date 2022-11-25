@@ -4,20 +4,36 @@
 
 #include "Monitor.h"
 
-Monitor::Monitor(MonitorType type, uint32_t id, const std::string &logname):
-        monitorId_(id),
-        logfile_(logname),
-        mainLoop_(start_process_monitor),
-        thread_(mainLoop_, process_handle_event),
-        type_(type),
-        isRunning_(false) {
+const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn)>> Monitor::monitorFuncMap = {
+    {MonitorType::PROCESS, start_process_monitor},
+};
 
+Monitor::Monitor(MonitorType type, uint32_t id):
+        monitorId_(id),
+        type_(type),
+        mainLoop_(monitorFuncMap.at(type)),
+        thread_(),
+        isRunning_(false) {
 }
 
 Monitor::~Monitor() {
-
+    printf("~Monitor\n");
 }
 
 void Monitor::start() {
-    thread_.detach();
+    if (!isRunning_) {
+        isRunning_ = true;
+        thread_ = std::thread(mainLoop_, nullptr);
+        thread_.detach();
+    }
+}
+
+void Monitor::stop() {
+    if (isRunning_) {
+        isRunning_ = false;
+    }
+}
+
+void Monitor::ShowMetadata() const {
+    printf("MonitorId: %u; Type: %u; isRunning: %d\n", monitorId_, type_, isRunning_);
 }
