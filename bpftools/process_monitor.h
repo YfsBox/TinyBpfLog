@@ -12,7 +12,7 @@
 
 
 int process_handle_event(void *ctx, void *data, size_t data_sz);
-int start_process_tracer(ring_buffer_sample_fn handle_event);
+int start_process_monitor(ring_buffer_sample_fn handle_event);
 
 
 

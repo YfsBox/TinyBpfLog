@@ -35,7 +35,7 @@ int process_handle_event(void *ctx, void *data, size_t data_sz) {
     return 0;
 }
 
-int start_process_tracer(ring_buffer_sample_fn handle_event) {
+int start_process_monitor(ring_buffer_sample_fn handle_event) {
     struct ring_buffer *rb = NULL;
     struct process_bpf *skel;
     int err;
@@ -88,7 +88,6 @@ int start_process_tracer(ring_buffer_sample_fn handle_event) {
         err = ring_buffer__poll(rb, 100 /* timeout, ms */);
         if (err == -EINTR) {
             err = 0;
-            // printf("-EINTR\n");
             break;
         }
         if (err < 0) {

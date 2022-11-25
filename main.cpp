@@ -9,7 +9,7 @@ int main() {
     /*NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7s %-7s %s\n",
            "TIME", "EVENT", "COMM", "PID", "PPID", "FILENAME/EXIT CODE");*/
     std::thread([](){
-        start_process_tracer(process_handle_event);
+        start_process_monitor(process_handle_event);
     }).join();
 
     return 0;
