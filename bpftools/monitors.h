@@ -66,7 +66,7 @@ int start_process_monitor(ring_buffer_sample_fn handle_event, shptrConfig config
 int idc_handle_event(void *ctx, void *data, size_t data_sz);
 int start_ipc_monitor(ring_buffer_sample_fn handle_event);
 
-int start_mount_monitor(ring_buffer_sample_fn handle_event, shptrConfig config)
+int start_mount_monitor(ring_buffer_sample_fn handle_event, shptrConfig config);
 
 
 #endif //TINYBPFLOG_MONITORS_H

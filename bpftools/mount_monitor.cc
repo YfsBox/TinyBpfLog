@@ -26,7 +26,7 @@ shptrMountConfig mount_config;
 
 #if !defined(__GLIBC__) || __GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 32)
 const char *strerrorname_np(int errnum) {
-    return NULL;
+    return nullptr;
 }
 #endif
 
@@ -185,6 +185,9 @@ int start_mount_monitor(ring_buffer_sample_fn mount_handle_event, shptrConfig co
     struct perf_buffer *pb = nullptr;
     struct mount_bpf *obj;
     int err;
+    if (config) {
+        mount_config = std::dynamic_pointer_cast<MountConfig>(config);
+    }
     /*err = argp_parse(&argp, argc, argv, 0, NULL, NULL);
     if (err)
         return err;*/
