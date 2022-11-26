@@ -62,7 +62,8 @@ string(REPLACE ";" " " SKEL_LIST "${skel_list}")
 SET(BPF_SRC
         process_monitor.cc
         common.cc
-        ipc_monitor.cc)
+        ipc_monitor.cc
+        mount_monitor.cc)
 
 add_library(bpftools ${BPF_SRC})
 target_link_libraries(bpftools ${skel_list} Nanolog rt)

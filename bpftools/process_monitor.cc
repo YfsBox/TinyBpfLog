@@ -22,10 +22,10 @@ bool ProcessConfig::SetConfig() {
 
 void ProcessConfig::ShowConfig() const {}
 
-std::shared_ptr<ProcessConfig> process_config;
+shptrProcessConfig process_config;
 
 int process_handle_event(void *ctx, void *data, size_t data_sz) {
-    auto e = reinterpret_cast<struct event*>(data);
+    auto pe = reinterpret_cast<struct process_event*>(data);
     if (process_config) {}
 
     struct tm *tm;
@@ -36,12 +36,12 @@ int process_handle_event(void *ctx, void *data, size_t data_sz) {
     tm = localtime(&t);
     strftime(ts, sizeof(ts), "%H:%M:%S", tm);
 
-    if (e->exit_event) {
-        NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d [%u] (%llums)",
-                 ts, "EXIT", e->comm, e->pid, e->ppid, e->exit_code, e->duration_ns / 1000000);
+    if (pe->exit_event) {
+        NANO_LOG(NOTICE, "[%s:%s] %-8s %-5s %-16s %-7d %-7d [%u] (%llums)",
+                 ts, "EXIT", pe->comm, pe->pid, pe->ppid, pe->exit_code, pe->duration_ns / 1000000);
     } else {
         NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d %s",
-                 ts, "EXEC", e->comm, e->pid, e->ppid, e->filename);
+                 ts, "EXEC", pe->comm, pe->pid, pe->ppid, pe->filename);
     }
     return 0;
 }
