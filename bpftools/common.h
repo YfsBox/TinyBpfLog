@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <list>
+#include <atomic>
 #include <sys/resource.h>
 #include "libbpf/src/libbpf.h"
 
@@ -20,6 +22,5 @@ static struct env {
 
 int libbpf_print_fn(enum libbpf_print_level level, const char *format, va_list args);
 void bump_memlock_rlimit(void);
-
 
 #endif //TINYBPFLOG_COMMON_H

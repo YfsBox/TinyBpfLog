@@ -1,18 +1,33 @@
 //
 // Created by 杨丰硕 on 2022/11/24.
 //
+#include <memory>
+#include "common.h"
 #include "monitors.h"
 #include "process.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-static volatile bool exiting = false;
+ProcessConfig::ProcessConfig(Monitor *monitor):
+    Config(monitor),
+    pidenable_(false),
+    commenable_(false){
 
-static void sig_handler(int sig) {
-    exiting = true;
 }
+
+ProcessConfig::~ProcessConfig() = default;
+
+bool ProcessConfig::SetConfig() {
+    return true;
+}
+
+void ProcessConfig::ShowConfig() const {}
+
+std::shared_ptr<ProcessConfig> process_config;
 
 int process_handle_event(void *ctx, void *data, size_t data_sz) {
     auto e = reinterpret_cast<struct event*>(data);
+    if (process_config) {}
+
     struct tm *tm;
     char ts[32];
     time_t t;
@@ -31,27 +46,23 @@ int process_handle_event(void *ctx, void *data, size_t data_sz) {
     return 0;
 }
 
-int start_process_monitor(ring_buffer_sample_fn handle_event) {
-    struct ring_buffer *rb = NULL;
+int start_process_monitor(ring_buffer_sample_fn handle_event, shptrConfig config) {
+    struct ring_buffer *rb = nullptr;
     struct process_bpf *skel;
     int err;
-
+    if (config) {
+        process_config = std::dynamic_pointer_cast<ProcessConfig>(config);
+    }
     /* Set up libbpf errors and debug info callback */
     libbpf_set_print(libbpf_print_fn);
     /* Bump RLIMIT_MEMLOCK to create BPF maps */
     bump_memlock_rlimit(); // 这些往往在一些简单的demo中都是常规的套路,暂时不需要深究.
-
-    /* Cleaner handling of Ctrl-C */
-    signal(SIGINT, sig_handler);
-    signal(SIGTERM, sig_handler);
-
     /* Load and verify BPF application */
     skel = process_bpf__open();
     if (!skel) {
         fprintf(stderr, "Failed to open and load BPF skeleton\n");
         return 1;
     }
-
     /* Parameterize BPF code with minimum duration parameter */
     skel->rodata->min_duration_ns = env.min_duration_ms * 1000000ULL;
 
@@ -68,10 +79,9 @@ int start_process_monitor(ring_buffer_sample_fn handle_event) {
         fprintf(stderr, "Failed to attach BPF skeleton\n");
         goto cleanup;
     }
-
     /* Set up ring buffer polling */
     // 常见一个ringbuf,作为内核与用户态交互的桥梁.
-    rb = ring_buffer__new(bpf_map__fd(skel->maps.rb), process_handle_event, NULL, NULL);
+    rb = ring_buffer__new(bpf_map__fd(skel->maps.rb), process_handle_event, nullptr, nullptr);
     if (!rb) {
         err = -1;
         fprintf(stderr, "Failed to create ring buffer\n");
@@ -80,7 +90,7 @@ int start_process_monitor(ring_buffer_sample_fn handle_event) {
     /* Process events */
     NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7s %-7s %s\n",
            "TIME", "EVENT", "COMM", "PID", "PPID", "FILENAME/EXIT CODE");
-    while (!exiting) {
+    while (!config->IsExit()) {
         err = ring_buffer__poll(rb, 100 /* timeout, ms */);
         if (err == -EINTR) {
             err = 0;
@@ -91,12 +101,9 @@ int start_process_monitor(ring_buffer_sample_fn handle_event) {
             break;
         }
     }
-
     cleanup:
-    printf("have clean up\n");
     /* Clean up */
     ring_buffer__free(rb);
     process_bpf__destroy(skel);
-
     return err < 0 ? -err : 0;
 }

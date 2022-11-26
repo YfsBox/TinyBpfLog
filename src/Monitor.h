@@ -6,35 +6,33 @@
 
 #include <functional>
 #include <thread>
+#include <memory>
 #include <unordered_map>
 #include "../bpftools/monitors.h"
 
-enum class MonitorType {
+enum class MonitorType : unsigned int {
     PROCESS = 1,
     SYSCALL,
 };
 
 class Monitor {
 public:
-
-    enum class MonitorStatus {
+    enum class MonitorStatus: unsigned int {
         START = 0,
         RUNNING,
         STOP,
     };
 
-    static const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn)>> monitorFuncMap;
+    static const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn, shptrConfig)>> monitorFuncMap;
     Monitor(MonitorType type, uint32_t id);
     ~Monitor();
 
     uint32_t getId() const {
         return monitorId_;
     }
-
     MonitorType getType() const {
         return type_;
     }
-
     bool isRunning() const {
         return isRunning_;
     }
@@ -43,13 +41,15 @@ public:
     void stop();
 
 private:
+    void InitConfig();
 
     uint32_t monitorId_;
     MonitorType type_;
     // std::function<int(void *ctx, void *data, size_t data_sz)> buf_event_handle_;
-    std::function<int(ring_buffer_sample_fn)> mainLoop_;
+    std::function<int(ring_buffer_sample_fn, shptrConfig)> mainLoop_;
     std::thread thread_;
     bool isRunning_;
+    std::shared_ptr<Config> config_;
 
 };
 

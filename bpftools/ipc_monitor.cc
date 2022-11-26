@@ -7,10 +7,6 @@
 
 static volatile bool exiting = false;
 
-static void sig_handler(int sig) {
-    exiting = true;
-}
-
 int handle_event(void *ctx, void *data, size_t data_sz) {
     auto e = reinterpret_cast<struct ipc_event *>(data);
     struct tm *tm;
