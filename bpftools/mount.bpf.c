@@ -47,9 +47,8 @@ static int probe_entry(const char *src, const char *dest, const char *fs,
     __u32 pid = pid_tgid >> 32;
     __u32 tid = (__u32)pid_tgid;
     struct arg arg = {};
-
-    if (target_pid && target_pid != pid)
-        return 0;
+    /*if (target_pid && target_pid != pid)
+        return 0;*/
     arg.ts = bpf_ktime_get_ns();
     arg.flags = flags;
     arg.src = src;
@@ -132,7 +131,6 @@ int umount_entry(struct trace_event_raw_sys_enter *ctx)
 {
     const char *dest = (const char *)ctx->args[0];
     __u64 flags = (__u64)ctx->args[1];
-
     return probe_entry(NULL, dest, NULL, flags, NULL, UMOUNT);
 }
 

@@ -13,6 +13,7 @@
 enum class MonitorType : unsigned int {
     PROCESS = 1,
     SYSCALL,
+    MOUNT,
 };
 
 class Monitor {

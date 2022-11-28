@@ -6,6 +6,7 @@
 
 const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn, shptrConfig)>> Monitor::monitorFuncMap = {
     {MonitorType::PROCESS, start_process_monitor},
+    {MonitorType::MOUNT, start_mount_monitor},
 };
 
 Monitor::Monitor(MonitorType type, uint32_t id):
@@ -49,6 +50,12 @@ void Monitor::InitConfig() {
         }
         case MonitorType::SYSCALL: {
             config_ = nullptr; // 先留着
+            break;
+        }
+        case MonitorType::MOUNT: {
+            auto config = std::make_shared<MountConfig>(this);
+            config_ = std::dynamic_pointer_cast<Config>(config);
+            break;
         }
         default:
             break;

@@ -30,10 +30,6 @@ const char *strerrorname_np(int errnum) {
 }
 #endif
 
-static pid_t target_pid = 0;
-static bool emit_timestamp = false;
-static bool output_vertically = false;
-static bool verbose = false;
 static const char *flag_names[] = {
         [0] = "MS_RDONLY",      [1] = "MS_NOSUID",    [2] = "MS_NODEV",         [3] = "MS_NOEXEC",      [4] = "MS_SYNCHRONOUS",
         [5] = "MS_REMOUNT",     [6] = "MS_MANDLOCK",  [7] = "MS_DIRSYNC",       [8] = "MS_NOSYMFOLLOW", [9] = "MS_NOATIME",
@@ -88,7 +84,6 @@ static const char *strerrno(int errnum)
 
     if (!errnum)
         return "0";
-
     ret[0] = '\0';
     errstr = strerrorname_np(-errnum);
     if (!errstr)
@@ -96,7 +91,6 @@ static const char *strerrno(int errnum)
         snprintf(ret, sizeof(ret), "%d", errnum);
         return ret;
     }
-
     snprintf(ret, sizeof(ret), "-%s", errstr);
     return ret;
 }
@@ -130,29 +124,17 @@ static void mount_handle_event(void *ctx, int cpu, void *data, __u32 data_sz)
     struct tm *tm;
     char ts[32];
     time_t t;
-    const char *indent;
     static const char *op_name[] = {
             [MOUNT] = "MOUNT",
             [UMOUNT] = "UMOUNT",
     };
-
-    if (emit_timestamp)
-    {
-        time(&t);
-        tm = localtime(&t);
-        strftime(ts, sizeof(ts), "%H:%M:%S ", tm);
-        printf("%s", ts);
-        indent = "    ";
-    }
-    else
-    {
-        indent = "";
-    }
-    if (!output_vertically)
-    {
-        printf("%-16s %-7d %-7d %-11u %s\n", me->comm, me->pid, me->tid, me->mnt_ns, gen_call(me));
-        return;
-    }
+    time(&t);
+    tm = localtime(&t);
+    strftime(ts, sizeof(ts), "%H:%M:%S ", tm);
+    NANO_LOG(NOTICE, "%s COMM[%s] PID[%d] TID[%d] MNT_NS[%u] OP[%s] %s\n", ts,me->comm,
+             me->pid, me->tid, me->mnt_ns,
+             op_name[me->op],gen_call(me));
+    /*
     if (emit_timestamp)
         printf("\n");
     printf("%sPID:    %d\n", indent, me->pid);
@@ -167,22 +149,22 @@ static void mount_handle_event(void *ctx, int cpu, void *data, __u32 data_sz)
     printf("%sTARGET: %s\n", indent, me->dest);
     printf("%sDATA:   %s\n", indent, me->data);
     printf("%sFLAGS:  %s\n", indent, strflags(me->flags));
-    printf("\n");
+    printf("\n");*/
 }
 
 static void handle_lost_events(void *ctx, int cpu, __u64 lost_cnt) {
     warn("lost %llu events on CPU #%d\n", lost_cnt, cpu);
 }
 
-int start_mount_monitor(ring_buffer_sample_fn mount_handle_event, shptrConfig config)
-{
+int start_mount_monitor(ring_buffer_sample_fn handle_event, shptrConfig config) {
     // LIBBPF_OPTS(bpf_object_open_opts, open_opts);
     /*static const struct argp argp = {
             .options = opts,
             .parser = parse_arg,
             .doc = argp_program_doc,
     };*/
-    struct perf_buffer *pb = nullptr;
+    perf_buffer *pb = nullptr;
+    perf_buffer_opts pb_opts = {};
     struct mount_bpf *obj;
     int err;
     if (config) {
@@ -204,9 +186,7 @@ int start_mount_monitor(ring_buffer_sample_fn mount_handle_event, shptrConfig co
         warn("failed to open BPF object\n");
         return 1;
     }
-
-    obj->rodata->target_pid = target_pid;
-
+    // obj->rodata->target_pid = target_pid;
     err = mount_bpf__load(obj);
     if (err)
     {
@@ -219,22 +199,15 @@ int start_mount_monitor(ring_buffer_sample_fn mount_handle_event, shptrConfig co
         warn("failed to attach BPF programs: %d\n", err);
         goto cleanup;
     }
-
-    pb = perf_buffer__new(bpf_map__fd(obj->maps.events), PERF_BUFFER_PAGES, mount_handle_event, handle_lost_events, NULL, NULL);
-    if (!pb)
-    {
+    pb_opts.sample_cb = mount_handle_event;
+    pb_opts.lost_cb = handle_lost_events;
+    pb = perf_buffer__new(bpf_map__fd(obj->maps.events), 8, &pb_opts);
+    if (!pb) {
         err = -errno;
         warn("failed to open perf buffer: %d\n", err);
         goto cleanup;
     }
-
-    if (!output_vertically)
-    {
-        if (emit_timestamp)
-            printf("%-8s ", "TIME");
-        printf("%-16s %-7s %-7s %-11s %s\n", "COMM", "PID", "TID", "MNT_NS", "CALL");
-    }
-
+    printf("begin poll mount event\n");
     while (!config->IsExit())
     {
         err = perf_buffer__poll(pb, PERF_POLL_TIMEOUT_MS);
@@ -245,7 +218,6 @@ int start_mount_monitor(ring_buffer_sample_fn mount_handle_event, shptrConfig co
         /* reset err to return 0 if exiting */
         err = 0;
     }
-
     cleanup:
     perf_buffer__free(pb);
     mount_bpf__destroy(obj);

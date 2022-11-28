@@ -47,7 +47,6 @@ int handle_exec(struct trace_event_raw_sched_process_exec *ctx) // 关于这个�
     /* don't emit exec events when minimum duration is specified */
     if (min_duration_ns)
         return 0;
-
     /* reserve sample from BPF ringbuf */
     // 这里考虑用一个buffer来存储e,首先留出一个空位,内部的值还没有被定义.
     e = bpf_ringbuf_reserve(&rb, sizeof(*e), 0);
@@ -85,7 +84,6 @@ int handle_exit(struct trace_event_raw_sched_process_template* ctx)
     /* ignore thread exits */
     if (pid != tid)
         return 0;
-
     /* if we recorded start of the process, calculate lifetime duration */
     start_ts = bpf_map_lookup_elem(&exec_start, &pid);
     if (start_ts)

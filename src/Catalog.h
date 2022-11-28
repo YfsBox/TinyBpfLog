@@ -41,6 +41,7 @@ private:
     MonitorTypeMap monitorTypeMap_ = {
             {"process", MonitorType::PROCESS},
             {"syscall", MonitorType::SYSCALL},
+            {"mount", MonitorType::MOUNT},
     };
 };
 

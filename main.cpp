@@ -47,7 +47,6 @@ int main(int argc, char **argv) {
             printf("Can't exec your cmd!\n");
         }
     }
-
     Catalog::getInstance().Stop();
     return 0;
 }
