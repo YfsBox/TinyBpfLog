@@ -9,7 +9,7 @@
 #include <chrono>
 #include <random>
 
-uint32_t getRandomNumber() {
+uint32_t getRandomNumber() { // 获取随机数
     auto seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::mt19937 gine (seed);
     return gine();

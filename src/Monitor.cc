@@ -44,7 +44,7 @@ void Monitor::ShowMetadata() const {
 void Monitor::InitConfig() {
     switch (type_) {
         case MonitorType::PROCESS: {
-            auto config = std::make_shared<ProcessConfig>(this);
+            auto config = std::make_shared<ProcessConfig>(monitorId_);
             config_ = std::dynamic_pointer_cast<Config>(config);
             break;
         }
@@ -53,7 +53,7 @@ void Monitor::InitConfig() {
             break;
         }
         case MonitorType::MOUNT: {
-            auto config = std::make_shared<MountConfig>(this);
+            auto config = std::make_shared<MountConfig>(monitorId_);
             config_ = std::dynamic_pointer_cast<Config>(config);
             break;
         }

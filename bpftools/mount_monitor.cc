@@ -8,8 +8,8 @@
 #include "mount.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-MountConfig::MountConfig(Monitor *monitor):
-        Config(monitor) {
+MountConfig::MountConfig(uint32_t monitorId):
+        Config(monitorId) {
 }
 
 MountConfig::~MountConfig() = default;
@@ -156,7 +156,7 @@ static void handle_lost_events(void *ctx, int cpu, __u64 lost_cnt) {
     warn("lost %llu events on CPU #%d\n", lost_cnt, cpu);
 }
 
-int start_mount_monitor(ring_buffer_sample_fn handle_event, shptrConfig config) {
+int start_mount_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &config) {
     // LIBBPF_OPTS(bpf_object_open_opts, open_opts);
     /*static const struct argp argp = {
             .options = opts,

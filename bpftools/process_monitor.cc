@@ -7,8 +7,8 @@
 #include "process.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-ProcessConfig::ProcessConfig(Monitor *monitor):
-    Config(monitor),
+ProcessConfig::ProcessConfig(uint32_t monitorId):
+    Config(monitorId),
     pidenable_(false),
     commenable_(false){
 
@@ -46,7 +46,7 @@ int process_handle_event(void *ctx, void *data, size_t data_sz) {
     return 0;
 }
 
-int start_process_monitor(ring_buffer_sample_fn handle_event, shptrConfig config) {
+int start_process_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &config) {
     struct ring_buffer *rb = nullptr;
     struct process_bpf *skel;
     int err;

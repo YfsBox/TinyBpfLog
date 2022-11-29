@@ -5,7 +5,6 @@
 #define TINYBPFLOG_PROCESS_H
 /* SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause) */
 /* Copyright (c) 2020 Facebook */
-
 #define TASK_COMM_LEN 16
 #define MAX_FILENAME_LEN 127
 

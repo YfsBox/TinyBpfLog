@@ -10,7 +10,6 @@
 #include "process.h"
 
 char LICENSE[] SEC("license") = "Dual BSD/GPL";
-
 // 为什么非要定义这些map而不是使用自己定义的数据结构存储?因为我们自己定义的数据结构是处于用户态空间的
 // 所以得专门借助.maps,因为这是处于内核空间中的数据结构.
 // 定义了bpf map数据结构,其中有type,max_entries,key,value这几种属性的设置
