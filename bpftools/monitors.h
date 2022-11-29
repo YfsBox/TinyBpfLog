@@ -12,7 +12,7 @@
 #include "process.h"
 #include "ipc.h"
 
-class Monitor;
+// class Monitor;
 class Config {
 public:
     explicit Config(uint32_t monitorId):
@@ -70,6 +70,7 @@ private:
 
 using shptrProcessConfig = std::shared_ptr<ProcessConfig>;
 using shptrMountConfig = std::shared_ptr<MountConfig>;
+using shptrTcpStateConfig = std::shared_ptr<TcpStateConfig>;
 
 int process_handle_event(void *ctx, void *data, size_t data_sz);
 int start_process_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &config);
@@ -77,6 +78,6 @@ int idc_handle_event(void *ctx, void *data, size_t data_sz);
 int start_ipc_monitor(ring_buffer_sample_fn handle_event);
 
 int start_mount_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &config);
-
+int start_tcpstate_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &config);
 
 #endif //TINYBPFLOG_MONITORS_H

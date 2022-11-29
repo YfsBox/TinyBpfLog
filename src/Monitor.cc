@@ -4,12 +4,13 @@
 
 #include "Monitor.h"
 
-const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn, shptrConfig)>> Monitor::monitorFuncMap = {
-    {MonitorType::PROCESS, start_process_monitor},
-    {MonitorType::MOUNT, start_mount_monitor},
+const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn,
+                                                        shptrConfig)>> Monitor::monitorFuncMap = {
+        {MonitorType::PROCESS, start_process_monitor},
+        {MonitorType::MOUNT,   start_mount_monitor},
 };
 
-Monitor::Monitor(MonitorType type, uint32_t id):
+Monitor::Monitor(MonitorType type, uint32_t id) :
         monitorId_(id),
         type_(type),
         mainLoop_(monitorFuncMap.at(type)),
@@ -24,6 +25,7 @@ Monitor::~Monitor() {
 
 void Monitor::start() {
     if (!isRunning_) {
+        config_->SetExit(false);
         thread_ = std::thread(mainLoop_, nullptr, config_);
         thread_.detach();
         isRunning_ = true;

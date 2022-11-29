@@ -17,5 +17,22 @@ bool TcpStateConfig::SetConfig() {
     return true;
 }
 
+static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz) {
+
+    return;
+}
+
+int start_tcpstate_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &cofig) {
+    perf_buffer *pb = nullptr;
+    perf_buffer_opts pb_opts = {};
+
+    struct tcpstate_bpf *obj;
+    int err;
+
+
+    return 0;
+}
+
+
 
 

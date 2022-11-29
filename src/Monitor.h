@@ -23,7 +23,6 @@ public:
         RUNNING,
         STOP,
     };
-
     static const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn, shptrConfig)>> monitorFuncMap;
     Monitor(MonitorType type, uint32_t id);
     ~Monitor();
@@ -51,7 +50,6 @@ private:
     std::thread thread_;
     bool isRunning_;
     std::shared_ptr<Config> config_;
-
 };
 
 #endif //TINYBPFLOG_MONITOR_H
