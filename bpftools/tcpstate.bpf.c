@@ -15,7 +15,7 @@
 
 const volatile bool filter_by_sport = false;
 const volatile bool filter_by_dport = false;
-const volatile short target_family = 0;
+const volatile short target_family = AF_INET;
 
 struct
 {

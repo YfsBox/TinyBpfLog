@@ -4,6 +4,7 @@
 #include <memory>
 #include "common.h"
 #include "monitors.h"
+#include "process.h"
 #include "process.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 

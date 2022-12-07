@@ -3,6 +3,7 @@
 //
 #include "monitors.h"
 #include "ipc.skel.h"
+#include "ipc.h"
 #include "../runtime/NanoLogCpp17.h"
 
 static volatile bool exiting = false;

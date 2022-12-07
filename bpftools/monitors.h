@@ -9,8 +9,6 @@
 #include <memory>
 #include <mutex>
 #include "common.h"
-#include "process.h"
-#include "ipc.h"
 
 // class Monitor;
 class Config {
@@ -62,7 +60,15 @@ public:
     explicit TcpStateConfig(uint32_t monitorId);
     ~TcpStateConfig() override;
     bool SetConfig() override;
+    bool GetEmitTimestamp() const {
+        return emit_timestamp_;
+    }
+    bool GetWideOutput() const {
+        return wide_output_;
+    }
 private:
+    bool emit_timestamp_;
+    bool wide_output_;
 
 };
 
