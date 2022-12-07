@@ -42,6 +42,7 @@ private:
             {"process", MonitorType::PROCESS},
             {"syscall", MonitorType::SYSCALL},
             {"mount", MonitorType::MOUNT},
+            {"tcpstate", MonitorType::TCPSTATE},
     };
 };
 

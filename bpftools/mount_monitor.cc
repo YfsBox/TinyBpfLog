@@ -21,8 +21,6 @@ bool MountConfig::SetConfig() {
 shptrMountConfig mount_config;
 
 #define PERF_BUFFER_PAGES    64
-#define PERF_POLL_TIMEOUT_MS 100
-#define warn(...)            fprintf(stderr, __VA_ARGS__)
 
 #if !defined(__GLIBC__) || __GLIBC__ < 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ < 32)
 const char *strerrorname_np(int errnum) {
@@ -152,9 +150,9 @@ static void mount_handle_event(void *ctx, int cpu, void *data, __u32 data_sz)
     printf("\n");*/
 }
 
-static void handle_lost_events(void *ctx, int cpu, __u64 lost_cnt) {
+/*static void handle_lost_events(void *ctx, int cpu, __u64 lost_cnt) {
     warn("lost %llu events on CPU #%d\n", lost_cnt, cpu);
-}
+}*/
 
 int start_mount_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &config) {
     // LIBBPF_OPTS(bpf_object_open_opts, open_opts);
@@ -207,7 +205,7 @@ int start_mount_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &c
         warn("failed to open perf buffer: %d\n", err);
         goto cleanup;
     }
-    printf("begin poll mount event\n");
+    // printf("begin poll mount event\n");
     while (!config->IsExit())
     {
         err = perf_buffer__poll(pb, PERF_POLL_TIMEOUT_MS);

@@ -30,12 +30,10 @@ public:
 protected:
     std::atomic<bool> exit_;
     std::mutex mutex_;
-    // Monitor *monitor_;
     uint32_t monitorId_;
 };
 
 using shptrConfig = std::shared_ptr<Config>;
-
 class ProcessConfig: public Config {
 public:
     explicit ProcessConfig(uint32_t monitorId);

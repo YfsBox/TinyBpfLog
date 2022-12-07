@@ -21,3 +21,7 @@ void bump_memlock_rlimit(void)
         exit(1);
     }
 }
+
+void handle_lost_events(void *ctx, int cpu, __u64 lost_cnt) {
+    warn("lost %llu events on CPU #%d\n", lost_cnt, cpu);
+}

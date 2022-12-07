@@ -48,7 +48,6 @@ file(GLOB apps *.bpf.c)
 SET(skel_list)
 foreach(app ${apps})
     get_filename_component(app_stem ${app} NAME_WE)
-
     # Build object skeleton and depend skeleton on libbpf build
     bpf_object(${app_stem} ${app_stem}.bpf.c)
     add_dependencies(${app_stem}_skel libbpf-build)
@@ -63,7 +62,8 @@ SET(BPF_SRC
         process_monitor.cc
         common.cc
         ipc_monitor.cc
-        mount_monitor.cc)
+        mount_monitor.cc
+        tcpstate_monitor.cc)
 
 add_library(bpftools ${BPF_SRC})
 target_link_libraries(bpftools ${skel_list} Nanolog rt)

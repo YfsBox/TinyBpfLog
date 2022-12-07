@@ -60,7 +60,6 @@ int handle_set_state(struct trace_event_raw_inet_sock_set_state *ctx)
 
     if (ctx->protocol != IPPROTO_TCP)
         return 0;
-
     if (target_family && target_family != family)
         return 0;
 
@@ -90,8 +89,7 @@ int handle_set_state(struct trace_event_raw_inet_sock_set_state *ctx)
     if (family == AF_INET) {
         bpf_probe_read_kernel(&event.saddr, sizeof(event.saddr), &sk->__sk_common.skc_rcv_saddr);
         bpf_probe_read_kernel(&event.daddr, sizeof(event.daddr), &sk->__sk_common.skc_daddr);
-    }
-    else { /* family == AF_INET6 */
+    } else { /* family == AF_INET6 */
         bpf_probe_read_kernel(&event.saddr, sizeof(event.saddr), &sk->__sk_common.skc_v6_rcv_saddr.in6_u.u6_addr32);
         bpf_probe_read_kernel(&event.daddr, sizeof(event.daddr), &sk->__sk_common.skc_v6_daddr.in6_u.u6_addr32);
     }

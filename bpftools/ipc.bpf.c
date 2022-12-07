@@ -5,7 +5,7 @@
 /* Copyright (c) 2020 Facebook */
 #include "vmlinux/vmlinux.h"
 #include "ipc.h"
-#include <asm-generic/errno.h>
+//#include <asm-generic/errno.h>
 #include "libbpf/src/bpf_helpers.h"
 #include "libbpf/src/bpf_tracing.h"
 #include "libbpf/src/bpf_core_read.h"

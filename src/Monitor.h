@@ -14,6 +14,7 @@ enum class MonitorType : unsigned int {
     PROCESS = 1,
     SYSCALL,
     MOUNT,
+    TCPSTATE,
 };
 
 class Monitor {

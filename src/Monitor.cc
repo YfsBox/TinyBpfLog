@@ -8,6 +8,7 @@ const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn,
                                                         shptrConfig)>> Monitor::monitorFuncMap = {
         {MonitorType::PROCESS, start_process_monitor},
         {MonitorType::MOUNT,   start_mount_monitor},
+        {MonitorType::TCPSTATE, start_tcpstate_monitor},
 };
 
 Monitor::Monitor(MonitorType type, uint32_t id) :
@@ -56,6 +57,11 @@ void Monitor::InitConfig() {
         }
         case MonitorType::MOUNT: {
             auto config = std::make_shared<MountConfig>(monitorId_);
+            config_ = std::dynamic_pointer_cast<Config>(config);
+            break;
+        }
+        case MonitorType::TCPSTATE: {
+            auto config = std::make_shared<TcpStateConfig>(monitorId_);
             config_ = std::dynamic_pointer_cast<Config>(config);
             break;
         }
