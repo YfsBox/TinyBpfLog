@@ -43,9 +43,16 @@ public:
     ~ProcessConfig() override;
     bool SetConfig() override;
     void AddPid(int pid);
+    bool IsPidFilter(int pid);
+
     void AddComm(const std::string &comm);
+    bool IsCommFilter(const std::string &comm);
+
     void SetMinDuration(uint64_t mduration) {
         min_duration_.store(mduration);
+    }
+    bool IsDutationFilter(uint64_t duration) const {
+        return duration < min_duration_;
     }
 private:
     void ShowConfig() const;

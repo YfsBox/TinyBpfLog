@@ -32,6 +32,17 @@ void ProcessConfig::AddPid(int pid) {
     pidWhiteSet_.insert(pid);
 }
 
+bool ProcessConfig::IsPidFilter(int pid) {
+    if (!pidenable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = pidWhiteSet_.find(pid); findit != pidWhiteSet_.end()) {
+        return false;
+    } // 在名单之中的不被过滤
+    return true;
+}
+
 void ProcessConfig::AddComm(const std::string &comm) {
     if (!commenable_) {
         commenable_.store(true);
@@ -40,16 +51,28 @@ void ProcessConfig::AddComm(const std::string &comm) {
     commWhiteSet_.insert(comm);
 }
 
+bool ProcessConfig::IsCommFilter(const std::string &comm) {
+    if (!commenable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = commWhiteSet_.find(comm); findit != commWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
+
 shptrProcessConfig process_config;
 
 int process_handle_event(void *ctx, void *data, size_t data_sz) {
     auto pe = reinterpret_cast<struct process_event*>(data);
-    if (process_config) {}
+    if (process_config->IsPidFilter(pe->pid) || process_config->IsCommFilter(pe->comm)) { // 符合过滤条件
+        return 0;
+    }
 
     struct tm *tm;
     char ts[32];
     time_t t;
-
     time(&t);
     tm = localtime(&t);
     strftime(ts, sizeof(ts), "%H:%M:%S", tm);
