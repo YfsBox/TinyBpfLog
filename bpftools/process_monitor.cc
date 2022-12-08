@@ -8,10 +8,11 @@
 #include "process.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-ProcessConfig::ProcessConfig(uint32_t monitorId):
+ProcessConfig::ProcessConfig(uint32_t monitorId, bool pideb, bool commenab, uint64_t mduration):
     Config(monitorId),
-    pidenable_(false),
-    commenable_(false){
+    min_duration_(mduration),
+    pidenable_(pideb),
+    commenable_(commenab) {
 
 }
 
@@ -22,6 +23,22 @@ bool ProcessConfig::SetConfig() {
 }
 
 void ProcessConfig::ShowConfig() const {}
+
+void ProcessConfig::AddPid(int pid) {
+    if (!pidenable_) {
+        pidenable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    pidWhiteSet_.insert(pid);
+}
+
+void ProcessConfig::AddComm(const std::string &comm) {
+    if (!commenable_) {
+        commenable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    commWhiteSet_.insert(comm);
+}
 
 shptrProcessConfig process_config;
 
@@ -38,7 +55,7 @@ int process_handle_event(void *ctx, void *data, size_t data_sz) {
     strftime(ts, sizeof(ts), "%H:%M:%S", tm);
 
     if (pe->exit_event) {
-        NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d [%u] (%llums)",
+        NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d [%u] (%ums)",
                  ts, "EXIT", pe->comm, pe->pid, pe->ppid, pe->exit_code, pe->duration_ns / 1000000);
     } else {
         NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d %s",

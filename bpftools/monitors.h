@@ -8,7 +8,10 @@
 #include <argp.h>
 #include <memory>
 #include <mutex>
+#include <set>
 #include "common.h"
+
+using Enable = std::atomic<bool>;
 
 // class Monitor;
 class Config {
@@ -26,7 +29,7 @@ public:
         return exit_;
     }
 protected:
-    std::atomic<bool> exit_;
+    Enable exit_;
     std::mutex mutex_;
     uint32_t monitorId_;
 };
@@ -34,15 +37,23 @@ protected:
 using shptrConfig = std::shared_ptr<Config>;
 class ProcessConfig: public Config {
 public:
-    explicit ProcessConfig(uint32_t monitorId);
+    ProcessConfig(uint32_t monitorId, bool pideb = false,
+                  bool commenab = false,
+                  uint64_t mind = 0);
     ~ProcessConfig() override;
     bool SetConfig() override;
+    void AddPid(int pid);
+    void AddComm(const std::string &comm);
+    void SetMinDuration(uint64_t mduration) {
+        min_duration_.store(mduration);
+    }
 private:
     void ShowConfig() const;
-    std::atomic<bool> pidenable_;
-    std::atomic<bool> commenable_;
-    std::list<int> pidWhiteList_;
-    std::list<std::string> commWhiteList_;
+    std::atomic<uint64_t> min_duration_;
+    Enable pidenable_;
+    Enable commenable_;
+    std::set<int> pidWhiteSet_;
+    std::set<std::string> commWhiteSet_;
 };
 
 class MountConfig: public Config {
@@ -51,13 +62,18 @@ public:
     ~MountConfig() override;
     bool SetConfig() override;
 private:
-    std::atomic<bool> pidenable_;
+    Enable pidenable_;
     std::list<int> pidWhiteList_;
 };
 
 class TcpStateConfig: public Config {
 public:
-    explicit TcpStateConfig(uint32_t monitorId);
+    TcpStateConfig(uint32_t monitorId, bool emit_timestamp = false,
+                   bool wide_output = false,
+                   bool saddr_eb = false,
+                   bool pid_eb = false,
+                   bool sport_eb = false,
+                   bool dport_eb = false);
     ~TcpStateConfig() override;
     bool SetConfig() override;
     bool GetEmitTimestamp() const {
@@ -66,10 +82,23 @@ public:
     bool GetWideOutput() const {
         return wide_output_;
     }
+    void AddSaddr(unsigned __int128 saddr);
+    void AddPid(uint32_t pid);
+    void AddSport(uint16_t sport);
+    void AddDport(uint16_t dport);
+
 private:
     bool emit_timestamp_;
     bool wide_output_;
+    Enable saddr_enable_;
+    Enable pid_enable_;
+    Enable sport_enable_;
+    Enable dport_enable_;
 
+    std::set<unsigned __int128> saddrWhiteSet_;
+    std::set<uint32_t> pidWhiteSet_;
+    std::set<uint16_t> sportWhiteSet_;
+    std::set<uint16_t> dportWhiteSet_;
 };
 
 using shptrProcessConfig = std::shared_ptr<ProcessConfig>;

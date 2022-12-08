@@ -28,14 +28,55 @@ static std::unordered_map<int, std::string> tcpstatesMap = {
         {13, "UNKNOWN"},
 };
 
-TcpStateConfig::TcpStateConfig(uint32_t monitorId):
-        Config(monitorId){
+TcpStateConfig::TcpStateConfig(uint32_t monitorId, bool emit_timestamp, bool wide_output,
+                               bool saddr_eb, bool pid_eb,
+                               bool sport_eb, bool dport_eb): Config(monitorId),
+                               emit_timestamp_(emit_timestamp),
+                               wide_output_(wide_output),
+                               saddr_enable_(saddr_eb),
+                               pid_enable_(pid_eb),
+                               sport_enable_(sport_eb),
+                               dport_enable_(dport_eb)
+                               {
+
 }
 
 TcpStateConfig::~TcpStateConfig() = default;
 
 bool TcpStateConfig::SetConfig() {
     return true;
+}
+
+void TcpStateConfig::AddSaddr(unsigned __int128 saddr) {
+    if (!saddr_enable_) {
+        saddr_enable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    saddrWhiteSet_.insert(saddr);
+}
+
+void TcpStateConfig::AddPid(uint32_t pid) {
+    if (!pid_enable_) {
+        pid_enable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    pidWhiteSet_.insert(pid);
+}
+
+void TcpStateConfig::AddSport(uint16_t sport) {
+    if (!sport_enable_) {
+        sport_enable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    sportWhiteSet_.insert(sport);
+}
+
+void TcpStateConfig::AddDport(uint16_t dport) {
+    if (!dport_enable_) {
+        dport_enable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    dportWhiteSet_.insert(dport);
 }
 
 shptrTcpStateConfig tcp_config;
@@ -51,7 +92,6 @@ static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz)
         time(&t);
         tm = localtime(&t);
         strftime(ts, sizeof(ts), "%H:%M:%S", tm);
-        printf("%8s ", ts);
     }
 
     inet_ntop(event->family, &event->saddr, saddr, sizeof(saddr));
@@ -85,12 +125,10 @@ int start_tcpstate_monitor(ring_buffer_sample_fn handle_event, const shptrConfig
         printf("failed to open BPF object\n");
         goto cleanup;
     }
-
     if (err = tcpstate_bpf__load(obj); err) {
         fprintf(stderr, "Failed to load and verify BPF skeleton\n");
         goto cleanup;
     }
-
     if (err = tcpstate_bpf__attach(obj); err) {
         // warn("failed to attach BPF programs: %d\n", err);
         printf("failed to attach BPF programs: %d\n", err);
@@ -110,7 +148,6 @@ int start_tcpstate_monitor(ring_buffer_sample_fn handle_event, const shptrConfig
             fprintf(stderr, "error polling perf buffer: %s\n", strerror(-err));
             goto cleanup;
         }
-        /* reset err to return 0 if exiting */
         err = 0;
     }
     cleanup:

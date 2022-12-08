@@ -9,15 +9,15 @@
 struct tcpstate_event {
     unsigned __int128 saddr;
     unsigned __int128 daddr;
-    __u64 skaddr;
-    __u64 ts_us;
-    __u64 delta_us;
-    __u32 pid;
+    uint64_t skaddr;
+    uint64_t ts_us;
+    uint64_t delta_us;
+    uint32_t pid;
     int oldstate;
     int newstate;
-    __u16 family;
-    __u16 sport;
-    __u16 dport;
+    uint16_t family;
+    uint16_t sport;
+    uint16_t dport;
     char task[TASK_COMM_LEN];
 };
 

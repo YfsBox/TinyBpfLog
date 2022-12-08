@@ -12,7 +12,7 @@ struct process_event {
     int pid; // 这个ok
     int ppid;
     unsigned exit_code;
-    unsigned long long duration_ns; // 这个也可ok
+    uint64_t duration_ns; // 这个也可ok
     char comm[TASK_COMM_LEN];
     char filename[MAX_FILENAME_LEN];  // 这个也ok
     bool exit_event;
