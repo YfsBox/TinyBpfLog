@@ -61,7 +61,7 @@ for phase in "${PHASES[@]}"; do
             docker_exec mkdir build install
             docker_exec ${CC:-cc} --version
             info "build"
-	    docker_exec make -j$((4*$(nproc))) CFLAGS="${CFLAGS}" -C ./src -B OBJDIR=../build
+	    docker_exec make -j$((4*$(nproc))) CFLAGS="${CFLAGS}" -C ./backend -B OBJDIR=../build
             info "ldd build/libbpf.so:"
             docker_exec ldd build/libbpf.so
             if ! docker_exec ldd build/libbpf.so | grep -q libelf; then
@@ -69,7 +69,7 @@ for phase in "${PHASES[@]}"; do
                 exit 1
             fi
             info "install"
-            docker_exec make -j$((4*$(nproc))) -C src OBJDIR=../build DESTDIR=../install install
+            docker_exec make -j$((4*$(nproc))) -C backend OBJDIR=../build DESTDIR=../install install
             docker_exec rm -rf build install
             ;;
         CLEANUP)

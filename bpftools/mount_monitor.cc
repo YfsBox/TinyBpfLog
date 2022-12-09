@@ -14,8 +14,8 @@ MountConfig::MountConfig(uint32_t monitorId):
 
 MountConfig::~MountConfig() = default;
 
-bool MountConfig::SetConfig() {
-    return true;
+void MountConfig::ShowConfig() {
+
 }
 
 shptrMountConfig mount_config;
@@ -143,7 +143,7 @@ static void mount_handle_event(void *ctx, int cpu, void *data, __u32 data_sz)
     printf("%sLAT:    %lldus\n", indent, me->delta / 1000);
     printf("%sMNT_NS: %u\n", indent, me->mnt_ns);
     printf("%sFS:     %s\n", indent, me->fs);
-    printf("%sSOURCE: %s\n", indent, me->src);
+    printf("%sSOURCE: %s\n", indent, me->backend);
     printf("%sTARGET: %s\n", indent, me->dest);
     printf("%sDATA:   %s\n", indent, me->data);
     printf("%sFLAGS:  %s\n", indent, strflags(me->flags));

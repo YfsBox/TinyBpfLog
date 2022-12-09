@@ -9,6 +9,6 @@ extraction:
       # As the buildsystem detection by LGTM is performed _only_ during the
       # 'configure' phase, we need to trick LGTM we use a supported build
       # system (configure, meson, cmake, etc.). This way LGTM correctly detects
-      # that our sources are in the src/ subfolder.
-      - touch src/configure
-      - chmod +x src/configure
+      # that our sources are in the backend/ subfolder.
+      - touch backend/configure
+      - chmod +x backend/configure

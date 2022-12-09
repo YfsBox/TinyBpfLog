@@ -24,7 +24,7 @@ jobs:
         env:
           COVERITY_SCAN_TOKEN: ${{ secrets.COVERITY_SCAN_TOKEN }}
           COVERITY_SCAN_PROJECT_NAME: libbpf
-          COVERITY_SCAN_BUILD_COMMAND_PREPEND: 'cd src/'
+          COVERITY_SCAN_BUILD_COMMAND_PREPEND: 'cd backend/'
           COVERITY_SCAN_BUILD_COMMAND: 'make'
       - name: SCM log
-        run: cat /home/runner/work/libbpf/libbpf/src/cov-int/scm_log.txt
+        run: cat /home/runner/work/libbpf/libbpf/backend/cov-int/scm_log.txt

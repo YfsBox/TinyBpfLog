@@ -116,11 +116,11 @@ jobs:
               - COVERITY_SCAN_PROJECT_NAME="libbpf"
               - COVERITY_SCAN_NOTIFICATION_EMAIL="${AUTHOR_EMAIL}"
               - COVERITY_SCAN_BRANCH_PATTERN="$TRAVIS_BRANCH"
-              # Note: `make -C src/` as a BUILD_COMMAND will not work here
-              - COVERITY_SCAN_BUILD_COMMAND_PREPEND="cd src/"
+              # Note: `make -C backend/` as a BUILD_COMMAND will not work here
+              - COVERITY_SCAN_BUILD_COMMAND_PREPEND="cd backend/"
               - COVERITY_SCAN_BUILD_COMMAND="make"
           install:
-              - sudo echo 'deb-src http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse' >>/etc/apt/sources.list
+              - sudo echo 'deb-backend http://archive.ubuntu.com/ubuntu/ focal main restricted universe multiverse' >>/etc/apt/sources.list
               - sudo apt-get update
               - sudo apt-get -y build-dep libelf-dev
               - sudo apt-get install -y libelf-dev pkg-config

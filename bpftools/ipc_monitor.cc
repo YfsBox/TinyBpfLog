@@ -34,8 +34,7 @@ int start_ipc_monitor(ring_buffer_sample_fn handle_event) {
 
     /* Load and verify BPF application */
     skel = ipc_bpf__open();
-    if (!skel)
-    {
+    if (!skel) {
         fprintf(stderr, "Failed to open and load BPF skeleton\n");
         return 1;
     }

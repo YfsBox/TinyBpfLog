@@ -423,10 +423,10 @@ enum bpf_core_relo_kind {
  * Clang built-in, passing expression that captures field address, e.g.:
  *
  * bpf_probe_read(&dst, sizeof(dst),
- *		  __builtin_preserve_access_index(&src->a.b.c));
+ *		  __builtin_preserve_access_index(&backend->a.b.c));
  *
  * In this case Clang will emit field relocation recording necessary data to
- * be able to find offset of embedded `a.b.c` field within `src` struct.
+ * be able to find offset of embedded `a.b.c` field within `backend` struct.
  *
  *   [0] https://llvm.org/docs/LangRef.html#getelementptr-instruction
  */

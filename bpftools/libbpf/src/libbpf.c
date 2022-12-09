@@ -6051,7 +6051,7 @@ poison:
 		break;
 	}
 	default:
-		pr_warn("prog '%s': relo #%d: trying to relocate unrecognized insn #%d, code:0x%x, src:0x%x, dst:0x%x, off:0x%x, imm:0x%x\n",
+		pr_warn("prog '%s': relo #%d: trying to relocate unrecognized insn #%d, code:0x%x, backend:0x%x, dst:0x%x, off:0x%x, imm:0x%x\n",
 			prog->name, relo_idx, insn_idx, insn->code,
 			insn->src_reg, insn->dst_reg, insn->off, insn->imm);
 		return -EINVAL;

@@ -20,8 +20,7 @@ public:
         exit_(false),
         monitorId_(monitorId) {}
     virtual ~Config() = default;
-    virtual bool SetConfig() = 0;
-
+    virtual void ShowConfig() = 0;
     void SetExit(bool exit) {
         exit_.store(exit);
     }
@@ -37,16 +36,16 @@ protected:
 using shptrConfig = std::shared_ptr<Config>;
 class ProcessConfig: public Config {
 public:
-    ProcessConfig(uint32_t monitorId, bool pideb = false,
+    explicit ProcessConfig(uint32_t monitorId, bool pideb = false,
                   bool commenab = false,
                   uint64_t mind = 0);
     ~ProcessConfig() override;
-    bool SetConfig() override;
     void AddPid(int pid);
     bool IsPidFilter(int pid);
 
     void AddComm(const std::string &comm);
     bool IsCommFilter(const std::string &comm);
+    void ShowConfig() override;
 
     void SetMinDuration(uint64_t mduration) {
         min_duration_.store(mduration);
@@ -54,9 +53,12 @@ public:
     bool IsDutationFilter(uint64_t duration) const {
         return duration < min_duration_;
     }
+    uint64_t GetMinDuration() const {
+        return min_duration_;
+    }
+
 private:
-    void ShowConfig() const;
-    std::atomic<uint64_t> min_duration_;
+    std::atomic<uint64_t> min_duration_; // 这个地方的单位是second不是ns
     Enable pidenable_;
     Enable commenable_;
     std::set<int> pidWhiteSet_;
@@ -67,7 +69,7 @@ class MountConfig: public Config {
 public:
     explicit MountConfig(uint32_t monitorId);
     ~MountConfig() override;
-    bool SetConfig() override;
+    void ShowConfig() override;
 private:
     Enable pidenable_;
     std::list<int> pidWhiteList_;
@@ -75,20 +77,21 @@ private:
 
 class TcpStateConfig: public Config {
 public:
-    TcpStateConfig(uint32_t monitorId, bool emit_timestamp = false,
+    explicit TcpStateConfig(uint32_t monitorId, bool emit_timestamp = false,
                    bool wide_output = false,
                    bool saddr_eb = false,
                    bool pid_eb = false,
                    bool sport_eb = false,
                    bool dport_eb = false);
     ~TcpStateConfig() override;
-    bool SetConfig() override;
     bool GetEmitTimestamp() const {
         return emit_timestamp_;
     }
     bool GetWideOutput() const {
         return wide_output_;
     }
+    void ShowConfig() override;
+
     void AddSaddr(unsigned __int128 saddr);
     void AddPid(uint32_t pid);
     void AddSport(uint16_t sport);

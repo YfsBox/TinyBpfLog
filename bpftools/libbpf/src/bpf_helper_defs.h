@@ -927,7 +927,7 @@ static __u64 (*bpf_get_current_task)(void) = (void *) 35;
  * bpf_probe_write_user
  *
  * 	Attempt in a safe way to write *len* bytes from the buffer
- * 	*src* to *dst* in memory. It only works for threads that are in
+ * 	*backend* to *dst* in memory. It only works for threads that are in
  * 	user context, and *dst* must be a valid user space address.
  *
  * 	This helper should not be used to implement any kind of

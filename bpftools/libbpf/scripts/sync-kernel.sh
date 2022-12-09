@@ -38,7 +38,7 @@ trap "cd ${WORKDIR}; exit" INT TERM EXIT
 
 declare -A PATH_MAP
 PATH_MAP=(									\
-	[tools/lib/bpf]=src							\
+	[tools/lib/bpf]=backend							\
 	[tools/include/uapi/linux/bpf_common.h]=include/uapi/linux/bpf_common.h	\
 	[tools/include/uapi/linux/bpf.h]=include/uapi/linux/bpf.h		\
 	[tools/include/uapi/linux/btf.h]=include/uapi/linux/btf.h		\
@@ -51,7 +51,7 @@ PATH_MAP=(									\
 
 LIBBPF_PATHS="${!PATH_MAP[@]} :^tools/lib/bpf/Makefile :^tools/lib/bpf/Build :^tools/lib/bpf/.gitignore :^tools/include/tools/libc_compat.h"
 LIBBPF_VIEW_PATHS="${PATH_MAP[@]}"
-LIBBPF_VIEW_EXCLUDE_REGEX='^src/(Makefile|Build|test_libbpf\.c|bpf_helper_defs\.h|\.gitignore)$'
+LIBBPF_VIEW_EXCLUDE_REGEX='^backend/(Makefile|Build|test_libbpf\.c|bpf_helper_defs\.h|\.gitignore)$'
 LINUX_VIEW_EXCLUDE_REGEX='^include/tools/libc_compat.h$'
 
 LIBBPF_TREE_FILTER="mkdir -p __libbpf/include/uapi/linux __libbpf/include/tools && "$'\\\n'
@@ -274,15 +274,15 @@ git checkout ${TIP_TAG}
 # re-generate bpf_helper_defs.h
 cd_to ${LIBBPF_REPO}
 "${LINUX_ABS_DIR}/scripts/bpf_doc.py" --header					      \
-	--file include/uapi/linux/bpf.h > src/bpf_helper_defs.h
+	--file include/uapi/linux/bpf.h > backend/bpf_helper_defs.h
 # if anything changed, commit it
-helpers_changes=$(git status --porcelain src/bpf_helper_defs.h | wc -l)
+helpers_changes=$(git status --porcelain backend/bpf_helper_defs.h | wc -l)
 if ((${helpers_changes} == 1)); then
-	git add src/bpf_helper_defs.h
+	git add backend/bpf_helper_defs.h
 	git commit -m "sync: auto-generate latest BPF helpers
 
 Latest changes to BPF helper definitions.
-" -- src/bpf_helper_defs.h
+" -- backend/bpf_helper_defs.h
 fi
 
 # Use generated cover-letter as a template for "sync commit" with

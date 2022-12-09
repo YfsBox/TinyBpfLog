@@ -43,10 +43,6 @@ TcpStateConfig::TcpStateConfig(uint32_t monitorId, bool emit_timestamp, bool wid
 
 TcpStateConfig::~TcpStateConfig() = default;
 
-bool TcpStateConfig::SetConfig() {
-    return true;
-}
-
 void TcpStateConfig::AddSaddr(unsigned __int128 saddr) {
     if (!saddr_enable_) {
         saddr_enable_.store(true);
@@ -77,6 +73,23 @@ void TcpStateConfig::AddDport(uint16_t dport) {
     }
     std::lock_guard<std::mutex> guard(mutex_);
     dportWhiteSet_.insert(dport);
+}
+
+void TcpStateConfig::ShowConfig() { // 用来作为测试helper函数
+    uint32_t sasize, psize, spsize, dpsize;
+    bool saeb = saddr_enable_, peb = pid_enable_,
+            speb = sport_enable_, dpeb = dport_enable_;
+    {
+        std::lock_guard<std::mutex> guard(mutex_);
+        sasize = saddrWhiteSet_.size();
+        psize = pidWhiteSet_.size();
+        spsize = sportWhiteSet_.size();
+        dpsize = dportWhiteSet_.size();
+    }
+    printf("source filter enable: %d, the set size: %u\n", saeb, sasize);
+    printf("pid filter enanle: %d, the set size: %u\n", peb, psize);
+    printf("source port filter enable: %d, the set size: %u", speb, spsize);
+    printf("des port filter enable: %d, the set size: %u", dpeb, dpsize);
 }
 
 shptrTcpStateConfig tcp_config;

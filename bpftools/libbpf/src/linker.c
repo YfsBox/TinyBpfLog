@@ -63,9 +63,9 @@ struct src_obj {
 	struct src_sec *secs;
 	int sec_cnt;
 
-	/* mapping of symbol indices from src to dst ELF */
+	/* mapping of symbol indices from backend to dst ELF */
 	int *sym_map;
-	/* mapping from the src BTF type IDs to dst ones */
+	/* mapping from the backend BTF type IDs to dst ones */
 	int *btf_type_map;
 };
 
@@ -1126,7 +1126,7 @@ static int extend_sec(struct bpf_linker *linker, struct dst_sec *dst, struct src
 
 		/* pad dst section, if it's alignment forced size increase */
 		memset(dst->raw_data + dst->sec_sz, 0, dst_align_sz - dst->sec_sz);
-		/* now copy src data at a properly aligned offset */
+		/* now copy backend data at a properly aligned offset */
 		memcpy(dst->raw_data + dst_align_sz, src->data->d_buf, src->shdr->sh_size);
 	}
 

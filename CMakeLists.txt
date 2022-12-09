@@ -26,10 +26,10 @@ string(TOUPPER ${CMAKE_BUILD_TYPE} BUILD_TYPE)
 
 add_subdirectory(bpftools)
 add_subdirectory(runtime)
-add_subdirectory(src)
-add_subdirectory(demos)
+add_subdirectory(backend)
+add_subdirectory(test)
 
 
 add_executable(main main.cpp)
-target_link_libraries(main srces)
+target_link_libraries(main backend)
 

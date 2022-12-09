@@ -2,7 +2,7 @@
 #include <thread>
 #include <argp.h>
 #include <unistd.h>
-#include "src/Catalog.h"
+#include "backend/Catalog.h"
 
 bool exit_sig = false;
 static void handle_sig(int sig) {

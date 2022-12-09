@@ -18,11 +18,9 @@ ProcessConfig::ProcessConfig(uint32_t monitorId, bool pideb, bool commenab, uint
 
 ProcessConfig::~ProcessConfig() = default;
 
-bool ProcessConfig::SetConfig() {
-    return true;
-}
+void ProcessConfig::ShowConfig() {
 
-void ProcessConfig::ShowConfig() const {}
+}
 
 void ProcessConfig::AddPid(int pid) {
     if (!pidenable_) {
@@ -105,8 +103,7 @@ int start_process_monitor(ring_buffer_sample_fn handle_event, const shptrConfig 
         return 1;
     }
     /* Parameterize BPF code with minimum duration parameter */
-    skel->rodata->min_duration_ns = env.min_duration_ms * 1000000ULL;
-
+    skel->rodata->min_duration_ns = process_config->GetMinDuration() * 1000000ULL;
     /* Load & verify BPF programs */
     err = process_bpf__load(skel);
     if (err) {

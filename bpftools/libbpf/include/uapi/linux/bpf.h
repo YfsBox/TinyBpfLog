@@ -2243,10 +2243,10 @@ union bpf_attr {
  * 	Return
  * 		A pointer to the current task struct.
  *
- * long bpf_probe_write_user(void *dst, const void *src, u32 len)
+ * long bpf_probe_write_user(void *dst, const void *backend, u32 len)
  * 	Description
  * 		Attempt in a safe way to write *len* bytes from the buffer
- * 		*src* to *dst* in memory. It only works for threads that are in
+ * 		*backend* to *dst* in memory. It only works for threads that are in
  * 		user context, and *dst* must be a valid user space address.
  *
  * 		This helper should not be used to implement any kind of
