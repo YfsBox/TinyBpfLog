@@ -13,7 +13,7 @@
 
 class Catalog {
 public:
-
+    friend class ClassForTest;
     using MonitorMap = std::unordered_map<uint32_t, std::unique_ptr<Monitor>>;
     using MonitorTypeMap = std::unordered_map<std::string, MonitorType>;
 

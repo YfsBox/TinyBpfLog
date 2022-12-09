@@ -86,8 +86,8 @@ void TcpStateConfig::ShowConfig() { // 用来作为测试helper函数
         spsize = sportWhiteSet_.size();
         dpsize = dportWhiteSet_.size();
     }
-    printf("source filter enable: %d, the set size: %u\n", saeb, sasize);
-    printf("pid filter enanle: %d, the set size: %u\n", peb, psize);
+    // 这里的输出不是线程安全的
+    printf("source filter enable: %d, the set size: %u\npid filter enanle: %d, the set size: %u", saeb, sasize, peb, psize);
     printf("source port filter enable: %d, the set size: %u", speb, spsize);
     printf("des port filter enable: %d, the set size: %u", dpeb, dpsize);
 }

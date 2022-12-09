@@ -38,6 +38,7 @@ public:
         return isRunning_;
     }
     void ShowMetadata() const;
+    void ShowConfig();
     void start();
     void stop();
 

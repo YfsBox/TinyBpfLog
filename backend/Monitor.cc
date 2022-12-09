@@ -69,3 +69,9 @@ void Monitor::InitConfig() {
             break;
     }
 }
+
+void Monitor::ShowConfig() {
+    if (config_) {
+        config_->ShowConfig();
+    }
+}

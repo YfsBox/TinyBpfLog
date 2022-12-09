@@ -4,12 +4,16 @@
 #include <iostream>
 #include <gtest/gtest.h>
 #include "../backend/Catalog.h"
+#include "class_for_test.h"
 
 const std::string PROCESS = "process";
 
 TEST(SINGLE_PROCMONITOR, SETCONFIG) {
+    ClassForTest cft(Catalog::getInstance());
+
     EXPECT_TRUE(Catalog::getInstance().AddMonitor(PROCESS));
-    Catalog::getInstance().ShowMonitors();
+    cft.ShowMonitorConfigs();
+
 
 
 }
@@ -17,7 +21,6 @@ TEST(SINGLE_PROCMONITOR, SETCONFIG) {
 int main(int argc, char* argv[]) {
     testing::InitGoogleTest(&argc, argv);
     RUN_ALL_TESTS();
-    std::cin.get();
     return 0;
 }
 

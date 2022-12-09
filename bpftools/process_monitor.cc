@@ -19,7 +19,18 @@ ProcessConfig::ProcessConfig(uint32_t monitorId, bool pideb, bool commenab, uint
 ProcessConfig::~ProcessConfig() = default;
 
 void ProcessConfig::ShowConfig() {
-
+    uint64_t min_ds = min_duration_;
+    bool peb = pidenable_, commeb = commenable_;
+    uint32_t psize, commsize;
+    {
+        std::lock_guard<std::mutex> guard(mutex_);
+        psize = pidWhiteSet_.size();
+        commsize = commWhiteSet_.size();
+    }
+    // 这里的输出其实并不是线程安全的
+    printf("min duration is %lu\n", min_ds);
+    printf("pid enable: %d, pid set size: %u\n", peb, psize);
+    printf("comm enable: %d, comm set size: %u\n", commeb, commsize);
 }
 
 void ProcessConfig::AddPid(int pid) {
