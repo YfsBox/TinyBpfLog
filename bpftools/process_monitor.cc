@@ -33,6 +33,25 @@ void ProcessConfig::ShowConfig() {
     printf("comm enable: %d, comm set size: %u\n", commeb, commsize);
 }
 
+void ProcessConfig::SetConfig() { // 暂时用来做测试的函数
+    char flag;
+    printf("If you want to add pid for filter?[y/n]\n");
+    std::cin >> flag;
+    if (flag == 'y' || flag == 'Y') {
+        // 省略去一些关于是否合法的判断
+        int pid;
+        std::cin >> pid;
+        AddPid(pid);
+    }
+    printf("If you want to add command for filter?[y/n]\n");
+    std::cin >> flag;
+    if (flag == 'y' || flag == 'Y') {
+        std::string command;
+        std::cin >> command;
+        AddComm(command);
+    }
+}
+
 void ProcessConfig::AddPid(int pid) {
     if (!pidenable_) {
         pidenable_.store(true);

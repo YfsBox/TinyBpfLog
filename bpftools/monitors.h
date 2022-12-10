@@ -27,6 +27,7 @@ public:
     bool IsExit() const {
         return exit_;
     }
+    virtual void SetConfig() = 0; // 暂时用来测试的版本SetConfig
 protected:
     Enable exit_;
     std::mutex mutex_;
@@ -56,6 +57,7 @@ public:
     uint64_t GetMinDuration() const {
         return min_duration_;
     }
+    void SetConfig() override;
 
 private:
     std::atomic<uint64_t> min_duration_; // 这个地方的单位是second不是ns
@@ -70,6 +72,7 @@ public:
     explicit MountConfig(uint32_t monitorId);
     ~MountConfig() override;
     void ShowConfig() override;
+    void SetConfig() override;
 private:
     Enable pidenable_;
     std::list<int> pidWhiteList_;
@@ -96,6 +99,8 @@ public:
     void AddPid(uint32_t pid);
     void AddSport(uint16_t sport);
     void AddDport(uint16_t dport);
+
+    void SetConfig() override;
 
 private:
     bool emit_timestamp_;

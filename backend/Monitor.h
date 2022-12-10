@@ -19,6 +19,7 @@ enum class MonitorType : unsigned int {
 
 class Monitor {
 public:
+    friend class ClassForTest;
     enum class MonitorStatus: unsigned int {
         START = 0,
         RUNNING,
@@ -41,6 +42,12 @@ public:
     void ShowConfig();
     void start();
     void stop();
+
+    void SetConfig() {
+        if (config_) {
+            config_->SetConfig();
+        }
+    }
 
 private:
     void InitConfig();

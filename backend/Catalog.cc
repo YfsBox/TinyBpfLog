@@ -65,3 +65,11 @@ bool Catalog::StopAndRemoveMonitor(uint32_t monitorId) {
     findit->second->stop();
     return true;
 }
+
+Monitor* Catalog::GetMonitor(uint32_t monitorId) const {
+    auto findit = monitorMap_.find(monitorId);
+    if (findit != monitorMap_.end()) {
+        return findit->second.get();
+    }
+    return nullptr;
+}

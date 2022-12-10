@@ -18,6 +18,10 @@ void MountConfig::ShowConfig() {
 
 }
 
+void MountConfig::SetConfig() {
+
+}
+
 shptrMountConfig mount_config;
 
 #define PERF_BUFFER_PAGES    64

@@ -92,6 +92,10 @@ void TcpStateConfig::ShowConfig() { // 用来作为测试helper函数
     printf("des port filter enable: %d, the set size: %u", dpeb, dpsize);
 }
 
+void TcpStateConfig::SetConfig() {
+
+}
+
 shptrTcpStateConfig tcp_config;
 
 static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz) {

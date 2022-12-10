@@ -27,6 +27,7 @@ public:
     bool AddMonitor(const std::string &typestr);
     bool StartMonitor(uint32_t monitorId);
     bool StopAndRemoveMonitor(uint32_t monitorId);
+    Monitor *GetMonitor(uint32_t monitorId) const;
 
 private:
     Catalog() = default;
