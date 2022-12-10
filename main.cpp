@@ -26,9 +26,9 @@ int main(int argc, char **argv) {
         std::cin >> cmd;
         if (cmd == "add") {
             printf("Please input the type of your new bpf worker:");
-            std::string bpftype;
-            std::cin >> bpftype;
-            Catalog::getInstance().AddMonitor(bpftype);
+            std::string bpftype, name;
+            std::cin >> bpftype >> name;
+            Catalog::getInstance().AddMonitor(bpftype, name);
         } else if (cmd == "start") {
             printf("Please input the id of moitor your want to run:");
             uint32_t inputId;

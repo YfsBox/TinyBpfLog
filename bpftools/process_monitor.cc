@@ -8,8 +8,9 @@
 #include "process.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-ProcessConfig::ProcessConfig(uint32_t monitorId, bool pideb, bool commenab, uint64_t mduration):
-    Config(monitorId),
+ProcessConfig::ProcessConfig(uint32_t monitorId, const std::string &monitorName,
+                             bool pideb, bool commenab, uint64_t mduration):
+    Config(monitorId, monitorName),
     min_duration_(mduration),
     pidenable_(pideb),
     commenable_(commenab) {
@@ -91,6 +92,8 @@ bool ProcessConfig::IsCommFilter(const std::string &comm) {
 }
 
 shptrProcessConfig process_config;
+/*std::string monitorName;
+std::uint32_t monitorId;*/
 
 int process_handle_event(void *ctx, void *data, size_t data_sz) {
     auto pe = reinterpret_cast<struct process_event*>(data);
@@ -106,10 +109,12 @@ int process_handle_event(void *ctx, void *data, size_t data_sz) {
     strftime(ts, sizeof(ts), "%H:%M:%S", tm);
 
     if (pe->exit_event) {
-        NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d [%u] (%ums)",
+        NANO_LOG(NOTICE, "[%s, %u] %-8s %-5s %-16s %-7d %-7d [%u] (%ums)",
+                 process_config->GetMonitorName().c_str(), process_config->GetMonitorId(),
                  ts, "EXIT", pe->comm, pe->pid, pe->ppid, pe->exit_code, pe->duration_ns / 1000000);
     } else {
-        NANO_LOG(NOTICE, "%-8s %-5s %-16s %-7d %-7d %s",
+        NANO_LOG(NOTICE, "[%s, %u] %-8s %-5s %-16s %-7d %-7d %s",
+                 process_config->GetMonitorName().c_str(), process_config->GetMonitorId(),
                  ts, "EXEC", pe->comm, pe->pid, pe->ppid, pe->filename);
     }
     return 0;
@@ -121,6 +126,8 @@ int start_process_monitor(ring_buffer_sample_fn handle_event, const shptrConfig 
     int err;
     if (config) {
         process_config = std::dynamic_pointer_cast<ProcessConfig>(config);
+        /*monitorId = process_config->GetMonitorId();
+        monitorName = process_config->GetMonitorName();*/
     }
     /* Set up libbpf errors and debug info callback */
     libbpf_set_print(libbpf_print_fn);

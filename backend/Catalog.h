@@ -24,7 +24,7 @@ public:
     void Init(const std::string &output);
     void Stop();
     uint32_t ShowMonitors() const;
-    bool AddMonitor(const std::string &typestr);
+    bool AddMonitor(const std::string &typestr, const std::string &name);
     bool StartMonitor(uint32_t monitorId);
     bool StopAndRemoveMonitor(uint32_t monitorId);
     Monitor *GetMonitor(uint32_t monitorId) const;

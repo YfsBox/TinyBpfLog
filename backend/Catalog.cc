@@ -26,22 +26,21 @@ uint32_t Catalog::ShowMonitors() const {
     return num;
 }
 
-bool Catalog::AddMonitor(const std::string &typestr) {
+bool Catalog::AddMonitor(const std::string &typestr, const std::string &name) {
     if (auto findit = monitorTypeMap_.find(typestr); findit == monitorTypeMap_.end()) {
         printf("The Monitor Type: %s not exist!\n", typestr.c_str());
         return false;
     }
     MonitorType type = monitorTypeMap_[typestr];
-    for (auto &id_monitor : monitorMap_) {
+    /*for (auto &id_monitor : monitorMap_) {
         MonitorType tp = id_monitor.second->getType();
         if (tp == type) {
             printf("The Monitor Type: %s has conflict!\n", typestr.c_str());
             return false;
         }
-    }
-
+    }*/
     uint32_t monitorid = getRandomNumber();
-    monitorMap_[monitorid] = std::make_unique<Monitor>(type, monitorid);
+    monitorMap_[monitorid] = std::make_unique<Monitor>(type, monitorid, name);
     printf("Create a monitor successfully,the id is %u\n", monitorid);
     return true;
 }

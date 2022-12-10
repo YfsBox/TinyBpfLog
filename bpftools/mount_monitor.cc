@@ -8,8 +8,8 @@
 #include "mount.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-MountConfig::MountConfig(uint32_t monitorId):
-        Config(monitorId) {
+MountConfig::MountConfig(uint32_t monitorId, const std::string &monitorName):
+        Config(monitorId, monitorName){
 }
 
 MountConfig::~MountConfig() = default;
@@ -79,8 +79,7 @@ static const char *strflags(__u64 flags) {
     return str;
 }
 
-static const char *strerrno(int errnum)
-{
+static const char *strerrno(int errnum) {
     const char *errstr;
     static char ret[32] = {};
 
@@ -88,8 +87,7 @@ static const char *strerrno(int errnum)
         return "0";
     ret[0] = '\0';
     errstr = strerrorname_np(-errnum);
-    if (!errstr)
-    {
+    if (!errstr) {
         snprintf(ret, sizeof(ret), "%d", errnum);
         return ret;
     }
@@ -97,8 +95,7 @@ static const char *strerrno(int errnum)
     return ret;
 }
 
-static const char *gen_call(const struct mount_event *me)
-{
+static const char *gen_call(const struct mount_event *me) {
     static char call[10240];
 
     memset(call, 0, sizeof(call));

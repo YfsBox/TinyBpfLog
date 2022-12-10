@@ -16,9 +16,10 @@ using Enable = std::atomic<bool>;
 // class Monitor;
 class Config {
 public:
-    explicit Config(uint32_t monitorId):
+    explicit Config(uint32_t monitorId, const std::string &monitorName):
         exit_(false),
-        monitorId_(monitorId) {}
+        monitorId_(monitorId),
+        monitorName_(monitorName) {}
     virtual ~Config() = default;
     virtual void ShowConfig() = 0;
     void SetExit(bool exit) {
@@ -27,19 +28,29 @@ public:
     bool IsExit() const {
         return exit_;
     }
+    uint32_t GetMonitorId() const {
+        return monitorId_;
+    }
+    const std::string &GetMonitorName() const {
+        return monitorName_;
+    }
+
     virtual void SetConfig() = 0; // 暂时用来测试的版本SetConfig
 protected:
     Enable exit_;
     std::mutex mutex_;
     uint32_t monitorId_;
+    std::string monitorName_;
 };
 
 using shptrConfig = std::shared_ptr<Config>;
 class ProcessConfig: public Config {
 public:
-    explicit ProcessConfig(uint32_t monitorId, bool pideb = false,
-                  bool commenab = false,
-                  uint64_t mind = 0);
+    explicit ProcessConfig(uint32_t monitorId,
+                           const std::string &monitorName,
+                           bool pideb = false,
+                           bool commenab = false,
+                           uint64_t mind = 0);
     ~ProcessConfig() override;
     void AddPid(int pid);
     bool IsPidFilter(int pid);
@@ -69,7 +80,7 @@ private:
 
 class MountConfig: public Config {
 public:
-    explicit MountConfig(uint32_t monitorId);
+    explicit MountConfig(uint32_t monitorId, const std::string &monitorName);
     ~MountConfig() override;
     void ShowConfig() override;
     void SetConfig() override;
@@ -80,12 +91,14 @@ private:
 
 class TcpStateConfig: public Config {
 public:
-    explicit TcpStateConfig(uint32_t monitorId, bool emit_timestamp = false,
-                   bool wide_output = false,
-                   bool saddr_eb = false,
-                   bool pid_eb = false,
-                   bool sport_eb = false,
-                   bool dport_eb = false);
+    explicit TcpStateConfig(uint32_t monitorId,
+                            const std::string &monitorName,
+                            bool emit_timestamp = false,
+                            bool wide_output = false,
+                            bool saddr_eb = false,
+                            bool pid_eb = false,
+                            bool sport_eb = false,
+                            bool dport_eb = false);
     ~TcpStateConfig() override;
     bool GetEmitTimestamp() const {
         return emit_timestamp_;

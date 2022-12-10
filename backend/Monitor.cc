@@ -11,12 +11,13 @@ const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn,
         {MonitorType::TCPSTATE, start_tcpstate_monitor},
 };
 
-Monitor::Monitor(MonitorType type, uint32_t id) :
+Monitor::Monitor(MonitorType type, uint32_t id, const std::string &name) :
         monitorId_(id),
         type_(type),
         mainLoop_(monitorFuncMap.at(type)),
         thread_(),
-        isRunning_(false) {
+        isRunning_(false),
+        name_(name) {
     InitConfig();
 }
 
@@ -47,7 +48,7 @@ void Monitor::ShowMetadata() const {
 void Monitor::InitConfig() {
     switch (type_) {
         case MonitorType::PROCESS: {
-            auto config = std::make_shared<ProcessConfig>(monitorId_);
+            auto config = std::make_shared<ProcessConfig>(monitorId_, name_);
             config_ = std::dynamic_pointer_cast<Config>(config);
             break;
         }
@@ -56,12 +57,12 @@ void Monitor::InitConfig() {
             break;
         }
         case MonitorType::MOUNT: {
-            auto config = std::make_shared<MountConfig>(monitorId_);
+            auto config = std::make_shared<MountConfig>(monitorId_, name_);
             config_ = std::dynamic_pointer_cast<Config>(config);
             break;
         }
         case MonitorType::TCPSTATE: {
-            auto config = std::make_shared<TcpStateConfig>(monitorId_);
+            auto config = std::make_shared<TcpStateConfig>(monitorId_, name_);
             config_ = std::dynamic_pointer_cast<Config>(config);
             break;
         }

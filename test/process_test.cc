@@ -11,7 +11,7 @@ const std::string PROCESS = "process";
 TEST(SINGLE_PROCMONITOR, SETCONFIG) {
     ClassForTest cft(Catalog::getInstance());
 
-    EXPECT_TRUE(Catalog::getInstance().AddMonitor(PROCESS));
+    EXPECT_TRUE(Catalog::getInstance().AddMonitor(PROCESS, "proc_monitor1"));
     cft.ShowMonitorConfigs();
     // test for command
     auto monitorIdList = cft.GetMonitorIdList();
@@ -55,6 +55,34 @@ TEST(SINGLE_PROCMONITOR, SETCONFIG) {
     // start and sleep main thread
     // stop and exit
     EXPECT_TRUE(cft.catalog_.StopAndRemoveMonitor(monitorId));
+}
+
+TEST(MULTIPLE_PROCMONITOR, SETCONFIG) {
+    const int mnum = 5;
+    ClassForTest cft(Catalog::getInstance());
+    cft.ShowMonitorConfigs();
+    // add 5 monitors
+    for (int i = 0; i < mnum; i++) {
+        char name[20];
+        memset(name, 0, sizeof(name));
+        sprintf(name, "proc_monitor_%d", i);
+        EXPECT_TRUE(Catalog::getInstance().AddMonitor(PROCESS, name));
+    }
+    // get monitors
+    auto monitorIdList = cft.GetMonitorIdList();
+    std::vector<Monitor *> monitors;
+    monitors.reserve(mnum);
+    for (auto monitorId : monitorIdList) {
+        monitors.push_back(cft.catalog_.GetMonitor(monitorId));
+    }
+    EXPECT_TRUE(monitors.size() == mnum);
+    // start monitors
+    for (auto monitorId : monitorIdList) {
+        EXPECT_TRUE(cft.catalog_.StartMonitor(monitorId));
+    }
+    cft.ShowMonitorConfigs();
+    sleep(20);
+
 }
 
 int main(int argc, char* argv[]) {

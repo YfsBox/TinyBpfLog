@@ -28,9 +28,11 @@ static std::unordered_map<int, std::string> tcpstatesMap = {
         {13, "UNKNOWN"},
 };
 
-TcpStateConfig::TcpStateConfig(uint32_t monitorId, bool emit_timestamp, bool wide_output,
+TcpStateConfig::TcpStateConfig(uint32_t monitorId,
+                               const std::string &monitorName,
+                               bool emit_timestamp, bool wide_output,
                                bool saddr_eb, bool pid_eb,
-                               bool sport_eb, bool dport_eb): Config(monitorId),
+                               bool sport_eb, bool dport_eb): Config(monitorId, monitorName),
                                emit_timestamp_(emit_timestamp),
                                wide_output_(wide_output),
                                saddr_enable_(saddr_eb),
@@ -42,7 +44,6 @@ TcpStateConfig::TcpStateConfig(uint32_t monitorId, bool emit_timestamp, bool wid
 }
 
 TcpStateConfig::~TcpStateConfig() = default;
-
 void TcpStateConfig::AddSaddr(unsigned __int128 saddr) {
     if (!saddr_enable_) {
         saddr_enable_.store(true);
@@ -96,7 +97,9 @@ void TcpStateConfig::SetConfig() {
 
 }
 
-shptrTcpStateConfig tcp_config;
+static shptrTcpStateConfig tcp_config;
+static std::string monitorName;
+static std::uint32_t monitorId;
 
 static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz) {
     char ts[32], saddr[26], daddr[26];
@@ -115,12 +118,12 @@ static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz)
     inet_ntop(event->family, &event->daddr, daddr, sizeof(daddr));
     if (tcp_config->GetWideOutput()) {
         family = event->family == AF_INET ? 4 : 6;
-        NANO_LOG(NOTICE, "%-16llx %-7d %-16s %-2d %-26s %-5d %-26s %-5d %-11s -> %-11s %.3f",
-               event->skaddr, event->pid, event->task, family, saddr, event->sport, daddr, event->dport,
+        NANO_LOG(NOTICE, "[%s, %u] %-16llx %-7d %-16s %-2d %-26s %-5d %-26s %-5d %-11s -> %-11s %.3f",
+               monitorName.c_str(), monitorId, event->skaddr, event->pid, event->task, family, saddr, event->sport, daddr, event->dport,
                tcpstatesMap[event->oldstate].c_str(), tcpstatesMap[event->newstate].c_str(), static_cast<double>(event->delta_us) / 1000);
     } else {
-        NANO_LOG(NOTICE, "%-16llx %-7d %-10.10s %-15s %-5d %-15s %-5d %-11s -> %-11s %.3f",
-               event->skaddr, event->pid, event->task, saddr, event->sport, daddr, event->dport,
+        NANO_LOG(NOTICE, "[%s, %u] %-16llx %-7d %-10.10s %-15s %-5d %-15s %-5d %-11s -> %-11s %.3f",
+               monitorName.c_str(), monitorId, event->skaddr, event->pid, event->task, saddr, event->sport, daddr, event->dport,
                tcpstatesMap[event->oldstate].c_str(), tcpstatesMap[event->newstate].c_str(), static_cast<double>(event->delta_us) / 1000);
     }
 }
@@ -131,7 +134,10 @@ int start_tcpstate_monitor(ring_buffer_sample_fn handle_event, const shptrConfig
 
     struct tcpstate_bpf *obj = nullptr;
     int err;
+
     tcp_config = std::dynamic_pointer_cast<TcpStateConfig>(config);
+    monitorName = config->GetMonitorName();
+    monitorId = config->GetMonitorId();
 
     libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
     libbpf_set_print(libbpf_print_fn);
