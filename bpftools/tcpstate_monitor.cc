@@ -97,9 +97,7 @@ void TcpStateConfig::SetConfig() {
 
 }
 
-static shptrTcpStateConfig tcp_config;
-static std::string monitorName;
-static std::uint32_t monitorId;
+thread_local shptrTcpStateConfig tcp_config;
 
 static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz) {
     char ts[32], saddr[26], daddr[26];
@@ -119,12 +117,12 @@ static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz)
     if (tcp_config->GetWideOutput()) {
         family = event->family == AF_INET ? 4 : 6;
         NANO_LOG(NOTICE, "[%s, %u] %-16llx %-7d %-16s %-2d %-26s %-5d %-26s %-5d %-11s -> %-11s %.3f",
-               monitorName.c_str(), monitorId, event->skaddr, event->pid, event->task, family, saddr, event->sport, daddr, event->dport,
+               tcp_config->GetMonitorName().c_str(), tcp_config->GetMonitorId(), event->skaddr, event->pid, event->task, family, saddr, event->sport, daddr, event->dport,
                tcpstatesMap[event->oldstate].c_str(), tcpstatesMap[event->newstate].c_str(), static_cast<double>(event->delta_us) / 1000);
     } else {
         NANO_LOG(NOTICE, "[%s, %u] %-16llx %-7d %-10.10s %-15s %-5d %-15s %-5d %-11s -> %-11s %.3f",
-               monitorName.c_str(), monitorId, event->skaddr, event->pid, event->task, saddr, event->sport, daddr, event->dport,
-               tcpstatesMap[event->oldstate].c_str(), tcpstatesMap[event->newstate].c_str(), static_cast<double>(event->delta_us) / 1000);
+                 tcp_config->GetMonitorName().c_str(), tcp_config->GetMonitorId(), event->skaddr, event->pid, event->task, saddr, event->sport, daddr, event->dport,
+                tcpstatesMap[event->oldstate].c_str(), tcpstatesMap[event->newstate].c_str(), static_cast<double>(event->delta_us) / 1000);
     }
 }
 
@@ -136,8 +134,6 @@ int start_tcpstate_monitor(ring_buffer_sample_fn handle_event, const shptrConfig
     int err;
 
     tcp_config = std::dynamic_pointer_cast<TcpStateConfig>(config);
-    monitorName = config->GetMonitorName();
-    monitorId = config->GetMonitorId();
 
     libbpf_set_strict_mode(LIBBPF_STRICT_ALL);
     libbpf_set_print(libbpf_print_fn);

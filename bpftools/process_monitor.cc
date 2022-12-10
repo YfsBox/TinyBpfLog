@@ -91,7 +91,7 @@ bool ProcessConfig::IsCommFilter(const std::string &comm) {
     return true;
 }
 
-shptrProcessConfig process_config;
+thread_local shptrProcessConfig process_config;
 /*std::string monitorName;
 std::uint32_t monitorId;*/
 

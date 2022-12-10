@@ -22,7 +22,7 @@ void MountConfig::SetConfig() {
 
 }
 
-shptrMountConfig mount_config;
+thread_local shptrMountConfig mount_config;
 
 #define PERF_BUFFER_PAGES    64
 
