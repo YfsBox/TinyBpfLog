@@ -8,11 +8,94 @@
 #include "mount.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-MountConfig::MountConfig(uint32_t monitorId, const std::string &monitorName):
-        Config(monitorId, monitorName){
+MountConfig::MountConfig(uint32_t monitorId,
+                         const std::string &monitorName,
+                         bool pidenable, bool commenable,
+                         bool destenable, bool srcenable): Config(monitorId, monitorName),
+                         pid_enable_(pidenable),
+                         comm_enable_(commenable),
+                         dest_enable_(destenable),
+                         src_enable_(srcenable) {
+
 }
 
 MountConfig::~MountConfig() = default;
+
+void MountConfig::AddPid(unsigned int pid) {
+    if (!pid_enable_) {
+        pid_enable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    pidWhiteSet_.insert(pid);
+}
+
+void MountConfig::AddComm(const std::string &comm) {
+    if (!comm_enable_) {
+        comm_enable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    commWhiteSet_.insert(comm);
+}
+
+void MountConfig::AddSrc(const std::string &src) {
+    if (!src_enable_) {
+        src_enable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    srcWhiteSet_.insert(src);
+}
+
+void MountConfig::AddDest(const std::string &dest) {
+    if (!dest_enable_) {
+        dest_enable_.store(true);
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    destWhiteSet_.insert(dest);
+}
+
+bool MountConfig::IsPidFilter(unsigned int pid) {
+    if (!pid_enable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = pidWhiteSet_.find(pid); findit != pidWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
+
+bool MountConfig::IsCommFilter(const std::string &comm) {
+    if (!comm_enable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = commWhiteSet_.find(comm); findit != commWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
+
+bool MountConfig::IsDestFilter(const std::string &dest) {
+    if (!dest_enable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = destWhiteSet_.find(dest); findit != destWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
+
+bool MountConfig::IsSrcFilter(const std::string &src) {
+    if (!src_enable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = srcWhiteSet_.find(src); findit != srcWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
 
 void MountConfig::ShowConfig() {
 

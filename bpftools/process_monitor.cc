@@ -126,8 +126,6 @@ int start_process_monitor(ring_buffer_sample_fn handle_event, const shptrConfig 
     int err;
     if (config) {
         process_config = std::dynamic_pointer_cast<ProcessConfig>(config);
-        /*monitorId = process_config->GetMonitorId();
-        monitorName = process_config->GetMonitorName();*/
     }
     /* Set up libbpf errors and debug info callback */
     libbpf_set_print(libbpf_print_fn);

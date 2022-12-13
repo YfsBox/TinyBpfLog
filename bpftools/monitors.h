@@ -19,7 +19,12 @@ public:
     explicit Config(uint32_t monitorId, const std::string &monitorName):
         exit_(false),
         monitorId_(monitorId),
-        monitorName_(monitorName) {}
+        monitorName_(monitorName) {
+
+    }
+    Config(const Config &config) = delete;
+    Config& operator=(const Config &config) = delete;
+
     virtual ~Config() = default;
     virtual void ShowConfig() = 0;
     void SetExit(bool exit) {
@@ -80,13 +85,36 @@ private:
 
 class MountConfig: public Config {
 public:
-    explicit MountConfig(uint32_t monitorId, const std::string &monitorName);
+    explicit MountConfig(uint32_t monitorId,
+                         const std::string &monitorName,
+                         bool pidenable = false,
+                         bool commenable = false,
+                         bool destenable = false,
+                         bool srcenable = false);
     ~MountConfig() override;
     void ShowConfig() override;
     void SetConfig() override;
+
+    void AddPid(unsigned int pid);
+    void AddComm(const std::string &comm);
+    void AddDest(const std::string &dest);
+    void AddSrc(const std::string &src);
+
+    bool IsPidFilter(unsigned int pid);
+    bool IsCommFilter(const std::string &comm);
+    bool IsDestFilter(const std::string &dest);
+    bool IsSrcFilter(const std::string &src);
+
 private:
-    Enable pidenable_;
-    std::list<int> pidWhiteList_;
+    Enable pid_enable_;
+    Enable comm_enable_;
+    Enable dest_enable_;
+    Enable src_enable_;
+    // std::list<int> pidWhiteList_;
+    std::set<uint16_t> pidWhiteSet_;
+    std::set<std::string> commWhiteSet_;
+    std::set<std::string> destWhiteSet_;
+    std::set<std::string> srcWhiteSet_;
 };
 
 class TcpStateConfig: public Config {
@@ -112,6 +140,11 @@ public:
     void AddPid(uint32_t pid);
     void AddSport(uint16_t sport);
     void AddDport(uint16_t dport);
+
+    bool IsSaddrFilter(unsigned __int128 saddr);
+    bool IsPidFilter(uint32_t pid);
+    bool IsSportFilter(uint16_t sport);
+    bool IsDportFilter(uint16_t dport);
 
     void SetConfig() override;
 

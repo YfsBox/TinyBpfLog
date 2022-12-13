@@ -97,11 +97,62 @@ void TcpStateConfig::SetConfig() {
 
 }
 
+bool TcpStateConfig::IsPidFilter(uint32_t pid) {
+    if (!pid_enable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = pidWhiteSet_.find(pid); findit != pidWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
+
+bool TcpStateConfig::IsSaddrFilter(unsigned __int128 saddr) {
+    if (!saddr_enable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = saddrWhiteSet_.find(saddr); findit != saddrWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
+
+bool TcpStateConfig::IsSportFilter(uint16_t sport) {
+    if (!sport_enable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = sportWhiteSet_.find(sport); findit != sportWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
+
+bool TcpStateConfig::IsDportFilter(uint16_t dport) {
+    if (!dport_enable_) {
+        return false;
+    }
+    std::lock_guard<std::mutex> guard(mutex_);
+    if (auto findit = dportWhiteSet_.find(dport); findit != dportWhiteSet_.end()) {
+        return false;
+    }
+    return true;
+}
+
+
 thread_local shptrTcpStateConfig tcp_config;
 
 static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz) {
     char ts[32], saddr[26], daddr[26];
     tcpstate_event *event = reinterpret_cast<tcpstate_event *>(data);
+
+    if (tcp_config->IsPidFilter(event->pid) || tcp_config->IsSaddrFilter(event->saddr)
+    || tcp_config->IsSportFilter(event->sport) || tcp_config->IsDportFilter(event->dport) ) {
+        return;
+    }
+
     struct tm *tm;
     int family;
     time_t t;
@@ -111,7 +162,6 @@ static void tcpstate_handle_event(void *ctx, int cpu, void *data, __u32 data_sz)
         tm = localtime(&t);
         strftime(ts, sizeof(ts), "%H:%M:%S", tm);
     }
-
     inet_ntop(event->family, &event->saddr, saddr, sizeof(saddr));
     inet_ntop(event->family, &event->daddr, daddr, sizeof(daddr));
     if (tcp_config->GetWideOutput()) {
