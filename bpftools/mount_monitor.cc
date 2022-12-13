@@ -270,14 +270,12 @@ int start_mount_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &c
     }
     // obj->rodata->target_pid = target_pid;
     err = mount_bpf__load(obj);
-    if (err)
-    {
+    if (err) {
         warn("failed to load BPF object: %d\n", err);
         goto cleanup;
     }
     err = mount_bpf__attach(obj);
-    if (err)
-    {
+    if (err) {
         warn("failed to attach BPF programs: %d\n", err);
         goto cleanup;
     }
@@ -290,8 +288,7 @@ int start_mount_monitor(ring_buffer_sample_fn handle_event, const shptrConfig &c
         goto cleanup;
     }
     // printf("begin poll mount event\n");
-    while (!config->IsExit())
-    {
+    while (!config->IsExit()) {
         err = perf_buffer__poll(pb, PERF_POLL_TIMEOUT_MS);
         if (err < 0 && err != -EINTR) {
             fprintf(stderr, "error polling perf buffer: %s\n", strerror(-err));

@@ -18,6 +18,11 @@ set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_CXX_FLAGS_DEBUG "-O3")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
+option(RUNNING_DAEMON "running as a daemon process")
+if (RUNNING_DAEMON)
+    add_compile_options(-DRUNNING_DAEMON)
+endif()
+
 string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CXX_FLAGS}")
 
 

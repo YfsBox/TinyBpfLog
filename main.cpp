@@ -3,6 +3,9 @@
 #include <argp.h>
 #include <unistd.h>
 #include "backend/Catalog.h"
+#include "backend/Server.h"
+
+
 
 bool exit_sig = false;
 static void handle_sig(int sig) {
@@ -10,12 +13,37 @@ static void handle_sig(int sig) {
 }
 
 int main(int argc, char **argv) {
-
     if (getuid()) {
         printf("You should run by root!\n");
-        return 0;
+        return 1;
     }
+#ifdef RUNNING_DAEMON
+    pid_t pid = fork();
+    if (pid == - 1) {
+        // 关于输出错误信息这方面暂且保留
+        return 1;
+    }
+    if (pid > 0) {
+        // 将父进程退出
+        exit(0);
+    }
+    pid = setsid();
+    if(pid == -1){
+        // 暂且不做关于错误信息的输出
+        return 1;
+    }
+    close(STDIN_FILENO);
+    close(STDOUT_FILENO);
+    close(STDERR_FILENO);
 
+    Catalog::getInstance().Init("/tmp/logFile");
+    Server::getInstance().Init(12234);
+    while (true) {
+        if (exit_sig) {
+            break;
+        }
+    }
+#else
     signal(SIGINT, handle_sig);
     signal(SIGTERM, handle_sig);
 
@@ -47,6 +75,8 @@ int main(int argc, char **argv) {
             printf("Can't exec your cmd!\n");
         }
     }
+#endif
+    Server::getInstance().Stop();
     Catalog::getInstance().Stop();
     return 0;
 }
