@@ -1,14 +1,15 @@
 package frontend
 
 import (
-	"fmt"
+	"log"
+	"os"
 )
 
 func main() {
-	fmt.Println("hello,world")
-	/*
-		app := InitCliApp()
-		app.Run(os.Args)
-	*/
+
+	app := InitCliApp()
+	if err := app.Run(os.Args); err != nil {
+		log.Fatalf("Bpflog frontend error: %v", err)
+	}
 
 }
