@@ -36,12 +36,21 @@ var InitCommand = cli.Command{
 		},
 	},
 	Action: func(context *cli.Context) error {
-		idres, err := DoIdentifier(context, INIT)
+		idres, err := DoIdentifier(context)
 		if err != nil {
-
+			return err
 		}
-		fmt.Printf("The id response is %v", idres)
-		return nil
+		fmt.Printf("the id response is %v", idres)
+		// 根据返回的response结合Init动作
+		if !idres.IsValid {
+			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.ErrorMsg)
+		}
+		if idres.MonitorState != notexist_state {
+			return fmt.Errorf("the Id or Name has exist")
+		}
+		// 接下来根据发送向该monitor发送cmd指令
+		_, err = SendCmd(context, INIT)
+		return err
 	},
 }
 
@@ -58,12 +67,21 @@ var RunCommand = cli.Command{
 		},
 	},
 	Action: func(context *cli.Context) error {
-		idres, err := DoIdentifier(context, RUN)
+		idres, err := DoIdentifier(context)
 		if err != nil {
-
+			return err
 		}
-		fmt.Printf("The id response is %v", idres)
-		return nil
+		if !idres.IsValid {
+			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.ErrorMsg)
+		}
+		switch idres.MonitorState {
+		case run_state:
+			return fmt.Errorf("the monitor is already running")
+		case notexist_state:
+			return fmt.Errorf("the monitor is not exist")
+		}
+		_, err = SendCmd(context, RUN)
+		return err
 	},
 }
 
@@ -80,11 +98,18 @@ var SetCommand = cli.Command{
 		},
 	},
 	Action: func(context *cli.Context) error {
-		idres, err := DoIdentifier(context, SET)
+		idres, err := DoIdentifier(context)
 		if err != nil {
-
+			return err
 		}
-		fmt.Printf("The id response is %v", idres)
+		// fmt.Printf("The id response is %v", idres)
+		if !idres.IsValid {
+			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.ErrorMsg)
+		}
+		if idres.MonitorState == notexist_state {
+			return fmt.Errorf("the monitor is not exsit")
+		}
+		_, err = SendCmd(context, SET)
 		return nil
 	},
 }
@@ -100,19 +125,30 @@ var StopCommand = cli.Command{
 		},
 	},
 	Action: func(context *cli.Context) error {
-		idres, err := DoIdentifier(context, STOP)
+		idres, err := DoIdentifier(context)
 		if err != nil {
-
+			return fmt.Errorf("%v: parse the identifier of monitor error", err)
 		}
-		fmt.Printf("The id response is %v", idres)
-		return nil
+		// fmt.Printf("The id response is %v", idres)
+		if !idres.IsValid {
+			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.ErrorMsg)
+		}
+		switch idres.MonitorState {
+		case notexist_state:
+			return fmt.Errorf("the monitor is not exist")
+		case stop_state:
+			return fmt.Errorf("the monitor is already stop")
+		}
+		_, err = SendCmd(context, STOP)
+		return err
 	},
 }
 
 var LookupCommand = cli.Command{
 	Name: LOOKUP,
 	Action: func(context *cli.Context) error {
-		return nil
+		err := SendLooKup()
+		return err
 	},
 }
 
