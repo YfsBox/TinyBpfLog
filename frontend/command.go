@@ -42,8 +42,8 @@ var InitCommand = cli.Command{
 		}
 		fmt.Printf("the id response is %v", idres)
 		// 根据返回的response结合Init动作
-		if !idres.IsValid {
-			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.ErrorMsg)
+		if !idres.Common.IsValid {
+			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.Common.ErrorMsg)
 		}
 		if idres.MonitorState != notexist_state {
 			return fmt.Errorf("the Id or Name has exist")
@@ -71,8 +71,8 @@ var RunCommand = cli.Command{
 		if err != nil {
 			return err
 		}
-		if !idres.IsValid {
-			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.ErrorMsg)
+		if !idres.Common.IsValid {
+			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.Common.ErrorMsg)
 		}
 		switch idres.MonitorState {
 		case run_state:
@@ -103,8 +103,8 @@ var SetCommand = cli.Command{
 			return err
 		}
 		// fmt.Printf("The id response is %v", idres)
-		if !idres.IsValid {
-			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.ErrorMsg)
+		if !idres.Common.IsValid {
+			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.Common.ErrorMsg)
 		}
 		if idres.MonitorState == notexist_state {
 			return fmt.Errorf("the monitor is not exsit")
@@ -130,8 +130,8 @@ var StopCommand = cli.Command{
 			return fmt.Errorf("%v: parse the identifier of monitor error", err)
 		}
 		// fmt.Printf("The id response is %v", idres)
-		if !idres.IsValid {
-			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.ErrorMsg)
+		if !idres.Common.IsValid {
+			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.Common.ErrorMsg)
 		}
 		switch idres.MonitorState {
 		case notexist_state:
