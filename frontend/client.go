@@ -1,8 +1,9 @@
-package frontend
+package main
 
 import (
 	"fmt"
 	"net"
+	"strings"
 	"time"
 )
 
@@ -22,7 +23,9 @@ func (c *Client) init(addr string, timeout int64) error {
 	var err error
 	c.Addr = addr
 	c.Timeout = timeout
-	c.Conn, err = net.DialTimeout(PROTOCOL_FAMILY, c.Addr, 4*time.Second)
+
+	c.Conn, err = net.DialTimeout(PROTOCOL_FAMILY, c.Addr, time.Duration(c.Timeout)*time.Second)
+	// c.Conn, err = net.Dial(PROTOCOL_FAMILY, c.Addr)
 	if err != nil {
 		return fmt.Errorf("fail when create client Conn error: %v", err)
 	}
@@ -41,7 +44,9 @@ func (c *Client) sendMsg(msg string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("fail when client get response after send msg: %v", err)
 	}
-	return string(data[:data_len]), nil
+	tmp_msg := string(data[:data_len])
+	tmp_msg = strings.TrimSuffix(tmp_msg, "\n")
+	return tmp_msg, nil
 }
 
 func (c *Client) stop() error {

@@ -1,8 +1,9 @@
-package frontend
+package main
 
 import (
 	"fmt"
 	"github.com/urfave/cli"
+	"log"
 )
 
 const (
@@ -40,7 +41,7 @@ var InitCommand = cli.Command{
 		if err != nil {
 			return err
 		}
-		fmt.Printf("the id response is %v", idres)
+		log.Printf("the id response is %v\n", idres)
 		// 根据返回的response结合Init动作
 		if !idres.Common.IsValid {
 			return fmt.Errorf("the Identifier response is not valid, the error is %v", idres.Common.ErrorMsg)
@@ -147,7 +148,10 @@ var StopCommand = cli.Command{
 var LookupCommand = cli.Command{
 	Name: LOOKUP,
 	Action: func(context *cli.Context) error {
-		err := SendLooKup()
+		response, err := SendLooKup()
+		if err != nil {
+			return fmt.Errorf("the error in lookup response is %v", response.Common.ErrorMsg)
+		}
 		return err
 	},
 }

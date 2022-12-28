@@ -1,4 +1,4 @@
-package frontend
+package main
 
 import (
 	"fmt"
@@ -9,9 +9,9 @@ import (
 
 // 表示monitor state的枚举类
 const (
-	notexist_state = iota
-	run_state
-	stop_state
+	notexist_state = iota // 0
+	run_state             // 1
+	stop_state            // 2
 )
 
 const (
@@ -22,6 +22,8 @@ const (
 	isvalid_idx      = 0
 	errormsg_idx     = 1
 	monitorstate_idx = 2
+
+	msg_separator = "\t"
 )
 
 type CommonResponse struct {
@@ -52,12 +54,12 @@ func splitKv(msg string) (string, string, error) {
 }
 
 func getIdentifierMsg(mname string, mid string) string {
-	msg := fmt.Sprintf("msgtype:id\nm_name:%v\nm_id:%v", mname, mid)
+	msg := fmt.Sprintf("msgtype:id%vm_name:%v%vm_id:%v", msg_separator, mname, msg_separator, mid)
 	return msg
 }
 
 func getCmdMsg(mname string, mid string, cmdtype string) string {
-	return fmt.Sprintf("msgtype:cmd\nm_name:%v\nm_id:%v", mname, mid)
+	return fmt.Sprintf("msgtype:cmd%v\nm_name:%v%v\nm_id:%v", msg_separator, mname, msg_separator, mid)
 }
 
 func getLookupMsg() string {
@@ -95,7 +97,7 @@ func parseValidAndErrmsg(common *CommonResponse, value []string) error {
 func parseIdReponse(resmsg string) (IdentifierResponse, error) {
 	var idres IdentifierResponse
 	// 首先根据\n来对消息进行分割
-	msgs := strings.Split(resmsg, "\n")
+	msgs := strings.Split(resmsg, msg_separator)
 	// 判断数量是否合法
 	if len(msgs) != VALID_ARGC_IDRES { // 只有三个才是合法的
 		return idres, fmt.Errorf("the number of message is not valid in response")
@@ -117,14 +119,14 @@ func parseIdReponse(resmsg string) (IdentifierResponse, error) {
 	case "stop":
 		idres.MonitorState = stop_state
 	default:
-		return idres, fmt.Errorf("not have this state of monitor")
+		return idres, fmt.Errorf("not have \"%v\" this state of monitor", valid_value[monitorstate_idx])
 	}
 	return idres, nil
 }
 
 func parseCommonResponse(resmsg string) (CommonResponse, error) {
 	var cmdres CommonResponse
-	msgs := strings.Split(resmsg, "\n")
+	msgs := strings.Split(resmsg, msg_separator)
 	if len(msgs) != VALID_ARGC_CMDRES {
 		return cmdres, fmt.Errorf("the number of message is not valid in response")
 	}
@@ -155,6 +157,7 @@ func DoIdentifier(context *cli.Context) (IdentifierResponse, error) {
 	if err != nil {
 		return idres, fmt.Errorf("fail when client send msg in do identifier: %v", err)
 	}
+	log.Printf("The idresponse is %v\n", response)
 	idres, err = parseIdReponse(response)
 	if err != nil {
 		return idres, fmt.Errorf("fail in parse identifier response: %v", err)
