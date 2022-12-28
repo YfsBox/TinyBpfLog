@@ -12,6 +12,7 @@ const (
 	SET    = "set"
 	STOP   = "stop"
 	LOOKUP = "lookup"
+	PS     = "ps"
 )
 
 const (
@@ -156,6 +157,13 @@ var LookupCommand = cli.Command{
 	},
 }
 
+var PsCommand = cli.Command{
+	Name: PS,
+	Action: func(ctx *cli.Context) error {
+		return nil
+	},
+}
+
 func InitCliApp() *cli.App {
 	app := cli.NewApp()
 	app.Name = "bpflog frontend"
@@ -167,6 +175,7 @@ func InitCliApp() *cli.App {
 		SetCommand,
 		StopCommand,
 		LookupCommand,
+		PsCommand,
 	}
 	return app
 }

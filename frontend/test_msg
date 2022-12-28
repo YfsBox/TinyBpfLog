@@ -1,0 +1,7 @@
+init:
+    valid:0    error:no    state:not exist
+    valid:1\terror:no\tstate:not exist
+    valid:0\terror:no\tstate:stop
+    valid:1\terror:no\tstate:stop
+    valid:0\terror:no\tstate:run
+    valid:0\terror:no\tstate:run

@@ -23,7 +23,7 @@ const (
 	errormsg_idx     = 1
 	monitorstate_idx = 2
 
-	msg_separator = "\t"
+	msg_separator = "\n"
 )
 
 type CommonResponse struct {
