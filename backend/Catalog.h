@@ -14,7 +14,7 @@
 class Catalog {
 public:
     friend class ClassForTest;
-    using MonitorMap = std::unordered_map<uint32_t, std::unique_ptr<Monitor>>;
+    using MonitorMap = std::unordered_map<std::string, std::unique_ptr<Monitor>>;
     using MonitorTypeMap = std::unordered_map<std::string, MonitorType>;
 
     static Catalog& getInstance() {
@@ -25,14 +25,14 @@ public:
     void Stop();
     uint32_t ShowMonitors() const;
     bool AddMonitor(const std::string &typestr, const std::string &name);
-    bool StartMonitor(uint32_t monitorId);
-    bool StopAndRemoveMonitor(uint32_t monitorId);
-    Monitor *GetMonitor(uint32_t monitorId) const;
+    bool StartMonitor(const std::string &monitorId);
+    bool StopAndRemoveMonitor(const std::string &monitorId);
+    Monitor *GetMonitor(const std::string &monitorId) const;
 
 private:
     Catalog() = default;
     Catalog(const Catalog &catalog) = delete;
-    Catalog& operator = (const Catalog &catalog) = delete;
+    Catalog& operator=(const Catalog &catalog) = delete;
 
     static const uint32_t MAX_MONITORS_SIZE = 20;
     bool isRunning_;

@@ -13,7 +13,7 @@ public:
     explicit ClassForTest(Catalog &catalog);
     ~ClassForTest();
     void ShowMonitorConfigs();
-    std::vector<uint32_t> GetMonitorIdList() const;
+    std::vector<std::string> GetMonitorIdList() const;
     shptrConfig GetConfig(Monitor *monitor);
 
     Catalog &catalog_;
@@ -34,8 +34,8 @@ void ClassForTest::ShowMonitorConfigs() {
     }
 }
 
-std::vector<uint32_t> ClassForTest::GetMonitorIdList() const {
-    std::vector<uint32_t> result;
+std::vector<std::string> ClassForTest::GetMonitorIdList() const {
+    std::vector<std::string> result;
     result.reserve(Catalog::MAX_MONITORS_SIZE);
     for (auto &monitor_pair : catalog_.monitorMap_) {
         result.push_back(monitor_pair.first);

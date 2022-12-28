@@ -39,33 +39,33 @@ bool Catalog::AddMonitor(const std::string &typestr, const std::string &name) {
             return false;
         }
     }*/
-    uint32_t monitorid = getRandomNumber();
+    std::string monitorid = getRandomId();
     monitorMap_[monitorid] = std::make_unique<Monitor>(type, monitorid, name);
-    printf("Create a monitor successfully,the id is %u\n", monitorid);
+    printf("Create a monitor successfully,the id is %s\n", monitorid.c_str());
     return true;
 }
 
-bool Catalog::StartMonitor(uint32_t monitorId) {
+bool Catalog::StartMonitor(const std::string &monitorId) {
     auto findit = monitorMap_.find(monitorId);
     if (findit == monitorMap_.end()) {
-        printf("The Monitor id: %u not exist!\n", monitorId);
+        printf("The Monitor id: %s not exist!\n", monitorId.c_str());
         return false;
     }
     findit->second->start();
     return true;
 }
 
-bool Catalog::StopAndRemoveMonitor(uint32_t monitorId) {
+bool Catalog::StopAndRemoveMonitor(const std::string &monitorId) {
     auto findit = monitorMap_.find(monitorId);
     if (findit == monitorMap_.end()) {
-        printf("The Monitor id: %u not exist!\n", monitorId);
+        printf("The Monitor id: %s not exist!\n", monitorId.c_str());
         return false;
     }
     findit->second->stop();
     return true;
 }
 
-Monitor* Catalog::GetMonitor(uint32_t monitorId) const {
+Monitor* Catalog::GetMonitor(const std::string &monitorId) const {
     auto findit = monitorMap_.find(monitorId);
     if (findit != monitorMap_.end()) {
         return findit->second.get();

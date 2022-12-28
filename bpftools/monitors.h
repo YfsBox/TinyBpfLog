@@ -12,11 +12,10 @@
 #include "common.h"
 
 using Enable = std::atomic<bool>;
-
 // class Monitor;
 class Config {
 public:
-    explicit Config(uint32_t monitorId, const std::string &monitorName):
+    explicit Config(const std::string &monitorId, const std::string &monitorName):
         exit_(false),
         monitorId_(monitorId),
         monitorName_(monitorName) {
@@ -33,10 +32,10 @@ public:
     bool IsExit() const {
         return exit_;
     }
-    uint32_t GetMonitorId() const {
+    std::string GetMonitorId() const {
         return monitorId_;
     }
-    const std::string &GetMonitorName() const {
+    std::string GetMonitorName() const {
         return monitorName_;
     }
 
@@ -44,14 +43,14 @@ public:
 protected:
     Enable exit_;
     std::mutex mutex_;
-    uint32_t monitorId_;
+    std::string monitorId_;
     std::string monitorName_;
 };
 
 using shptrConfig = std::shared_ptr<Config>;
 class ProcessConfig: public Config {
 public:
-    explicit ProcessConfig(uint32_t monitorId,
+    explicit ProcessConfig(const std::string &monitorId,
                            const std::string &monitorName,
                            bool pideb = false,
                            bool commenab = false,
@@ -85,7 +84,7 @@ private:
 
 class MountConfig: public Config {
 public:
-    explicit MountConfig(uint32_t monitorId,
+    explicit MountConfig(const std::string &monitorId,
                          const std::string &monitorName,
                          bool pidenable = false,
                          bool commenable = false,
@@ -119,7 +118,7 @@ private:
 
 class TcpStateConfig: public Config {
 public:
-    explicit TcpStateConfig(uint32_t monitorId,
+    explicit TcpStateConfig(const std::string &monitorId,
                             const std::string &monitorName,
                             bool emit_timestamp = false,
                             bool wide_output = false,

@@ -11,7 +11,7 @@ const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn,
         {MonitorType::TCPSTATE, start_tcpstate_monitor},
 };
 
-Monitor::Monitor(MonitorType type, uint32_t id, const std::string &name) :
+Monitor::Monitor(MonitorType type, const std::string &id, const std::string &name) :
         monitorId_(id),
         type_(type),
         mainLoop_(monitorFuncMap.at(type)),
@@ -42,7 +42,7 @@ void Monitor::stop() {
 }
 
 void Monitor::ShowMetadata() const {
-    printf("MonitorId: %u; Type: %u; isRunning: %d\n", monitorId_, type_, isRunning_);
+    printf("MonitorId: %s; Type: %u; isRunning: %d\n", monitorId_, type_, isRunning_);
 }
 
 void Monitor::InitConfig() {

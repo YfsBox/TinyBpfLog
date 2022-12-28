@@ -15,4 +15,8 @@ uint32_t getRandomNumber() { // 获取随机数
     return gine();
 }
 
+std::string getRandomId() {
+    return "";
+}
+
 #endif //TINYBPFLOG_UTILS_H

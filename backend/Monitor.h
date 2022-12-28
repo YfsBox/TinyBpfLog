@@ -26,10 +26,10 @@ public:
         STOP,
     };
     static const std::unordered_map<MonitorType, std::function<int(ring_buffer_sample_fn, shptrConfig)>> monitorFuncMap;
-    Monitor(MonitorType type, uint32_t id, const std::string &name);
+    Monitor(MonitorType type, const std::string &id, const std::string &name);
     ~Monitor();
 
-    uint32_t getId() const {
+    std::string getId() const {
         return monitorId_;
     }
     MonitorType getType() const {
@@ -52,7 +52,7 @@ public:
 private:
     void InitConfig();
 
-    uint32_t monitorId_;
+    std::string monitorId_;
     MonitorType type_;
     // std::function<int(void *ctx, void *data, size_t data_sz)> buf_event_handle_;
     std::function<int(ring_buffer_sample_fn, shptrConfig)> mainLoop_;

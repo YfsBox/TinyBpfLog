@@ -8,7 +8,7 @@
 #include "process.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-ProcessConfig::ProcessConfig(uint32_t monitorId, const std::string &monitorName,
+ProcessConfig::ProcessConfig(const std::string &monitorId, const std::string &monitorName,
                              bool pideb, bool commenab, uint64_t mduration):
     Config(monitorId, monitorName),
     min_duration_(mduration),
@@ -109,12 +109,12 @@ int process_handle_event(void *ctx, void *data, size_t data_sz) {
     strftime(ts, sizeof(ts), "%H:%M:%S", tm);
 
     if (pe->exit_event) {
-        NANO_LOG(NOTICE, "[%s, %u] %-8s %-5s %-16s %-7d %-7d [%u] (%ums)",
-                 process_config->GetMonitorName().c_str(), process_config->GetMonitorId(),
+        NANO_LOG(NOTICE, "[%s, %s] %-8s %-5s %-16s %-7d %-7d [%u] (%ums)",
+                 process_config->GetMonitorName().c_str(), process_config->GetMonitorId().c_str(),
                  ts, "EXIT", pe->comm, pe->pid, pe->ppid, pe->exit_code, pe->duration_ns / 1000000);
     } else {
-        NANO_LOG(NOTICE, "[%s, %u] %-8s %-5s %-16s %-7d %-7d %s",
-                 process_config->GetMonitorName().c_str(), process_config->GetMonitorId(),
+        NANO_LOG(NOTICE, "[%s, %s] %-8s %-5s %-16s %-7d %-7d %s",
+                 process_config->GetMonitorName().c_str(), process_config->GetMonitorId().c_str(),
                  ts, "EXEC", pe->comm, pe->pid, pe->ppid, pe->filename);
     }
     return 0;

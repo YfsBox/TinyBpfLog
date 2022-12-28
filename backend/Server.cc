@@ -3,10 +3,50 @@
 //
 #include "Server.h"
 #include <cstring>
+#include <vector>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <iostream>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
+
+static std::vector<std::string> splitString(const std::string &str, const std::string &split_flag) {
+    std::vector<std::string> result;
+    boost::split(result, str, boost::is_any_of(split_flag), boost::token_compress_on);
+    return result;
+}   // 用来分割字符串*/
+
+static MonitorIdentifier idmsg2MonitorIdentifier(const std::vector<std::string> &msglines) {
+    MonitorIdentifier result;
+    if (msglines.size() != Server::VALID_IDMSG_LINENUM) {
+        result.is_valid_ = false;
+        return result;
+    }
+    // 划分出kv
+    std::vector<std::string> valid_keys = {"msgtype", "m_name", "m_id"};
+    size_t key_idx = 0;
+    for (auto &line : msglines) {
+        auto kvpair = splitString(line, ":");
+        if (kvpair.size() != Server::VALID_KV_LEN) {
+            result.is_valid_ = false;
+            return result;
+        }
+        if (kvpair[key_idx] != valid_keys[key_idx]) {  // key不合法
+            result.is_valid_ = false;
+            return result;
+        }
+        if (key_idx == 1) {
+            result.name_ = kvpair[1];
+        }
+        if (key_idx == 2) {
+            result.id_ = kvpair[2];
+        }
+        key_idx++;
+    }
+
+    return result;
+}
+
 
 void Server::create_fd() {
     int ret = ::socket(AF_INET, SOCK_STREAM, 0);
@@ -69,7 +109,14 @@ void Server::Run() {
             break;
         }
         // 处理逻辑
-        std::cout << "The msg is: \n";
-        std::cout << read_buffer << '\n';
+        std::string msg = read_buffer;
+        auto lines = splitString(msg, "\n");
+        MonitorIdentifier midentifier = idmsg2MonitorIdentifier(lines);
+        if (!midentifier.is_valid_) {
+            // 发送不合法的id msg
+            continue; // 不再继续做处理
+        }
+
+
     }
 }

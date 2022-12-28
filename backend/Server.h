@@ -5,9 +5,19 @@
 #ifndef TINYBPFLOG_SERVER_H
 #define TINYBPFLOG_SERVER_H
 
+#include <iostream>
+
+struct MonitorIdentifier {
+    bool is_valid_;
+    std::string name_;
+    std::string id_;
+};
+
 class Server {
 public:
     friend class ClassForTest;
+    static const unsigned VALID_IDMSG_LINENUM = 3;
+    static const unsigned VALID_KV_LEN = 2;
     static const int BUFFER_SIZE = 1024;
     static Server& getInstance() {
         static Server server;

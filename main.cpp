@@ -59,12 +59,12 @@ int main(int argc, char **argv) {
             Catalog::getInstance().AddMonitor(bpftype, name);
         } else if (cmd == "start") {
             printf("Please input the id of moitor your want to run:");
-            uint32_t inputId;
+            std::string inputId;
             std::cin >> inputId;
             Catalog::getInstance().StartMonitor(inputId);
         } else if (cmd == "stop") {
             printf("Please input the Id you would like to stop:");
-            uint32_t inputId;
+            std::string inputId;
             std::cin >> inputId;
             Catalog::getInstance().StopAndRemoveMonitor(inputId);
         } else if (cmd == "quit") {

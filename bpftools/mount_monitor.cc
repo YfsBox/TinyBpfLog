@@ -8,7 +8,7 @@
 #include "mount.skel.h"
 #include "../runtime/NanoLogCpp17.h"
 
-MountConfig::MountConfig(uint32_t monitorId,
+MountConfig::MountConfig(const std::string &monitorId,
                          const std::string &monitorName,
                          bool pidenable, bool commenable,
                          bool destenable, bool srcenable): Config(monitorId, monitorName),
