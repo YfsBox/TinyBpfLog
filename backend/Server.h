@@ -7,7 +7,27 @@
 
 #include <iostream>
 
+enum class MessageType {
+    IdType,
+    CmdType,
+    LookUpType,
+    ErrType,
+};
+
+struct CommonResponse {
+    bool is_valid_;
+    std::string err_msg_;
+};
+
+struct IdResponse: public CommonResponse {
+    std::string state_; // 表示state的字符串
+};
+
+struct NotIdResponse: public CommonResponse {};     // 非id类型对应的response
+
 struct MonitorIdentifier {
+    static const size_t NAME_IDX = 1;
+    static const size_t ID_IDX = 2;
     bool is_valid_;
     std::string name_;
     std::string id_;

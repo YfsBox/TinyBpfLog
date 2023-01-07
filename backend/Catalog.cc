@@ -39,7 +39,7 @@ bool Catalog::AddMonitor(const std::string &typestr, const std::string &name) {
             return false;
         }
     }*/
-    std::string monitorid = getRandomId();
+    std::string monitorid = getRandomId(MONITOR_ID_LEN);
     monitorMap_[monitorid] = std::make_unique<Monitor>(type, monitorid, name);
     printf("Create a monitor successfully,the id is %s\n", monitorid.c_str());
     return true;
@@ -69,6 +69,15 @@ Monitor* Catalog::GetMonitor(const std::string &monitorId) const {
     auto findit = monitorMap_.find(monitorId);
     if (findit != monitorMap_.end()) {
         return findit->second.get();
+    }
+    return nullptr;
+}
+
+Monitor* Catalog::GetMonitorByName(const std::string &monitorName) const {
+    for (auto &[id, monitor] : monitorMap_) {
+        if (monitor->getName() == monitorName) {
+            return monitor.get();
+        }
     }
     return nullptr;
 }

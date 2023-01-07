@@ -15,8 +15,23 @@ uint32_t getRandomNumber() { // 获取随机数
     return gine();
 }
 
-std::string getRandomId() {
-    return "";
+std::string getRandomId(size_t len) {
+    int i;
+    std::string str;
+    for (i = 0; i < len; ++i) {
+        switch ((getRandomNumber() % 3)) {
+            case 1:
+                str += 'A' + getRandomNumber() % 26;
+                break;
+            case 2:
+                str += 'a' + getRandomNumber() % 26;
+                break;
+            default:
+                str += '0' + getRandomNumber() % 10;
+                break;
+        }
+    }
+    return str;
 }
 
 #endif //TINYBPFLOG_UTILS_H

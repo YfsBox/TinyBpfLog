@@ -20,7 +20,7 @@ enum class MonitorType : unsigned int {
 class Monitor {
 public:
     friend class ClassForTest;
-    enum class MonitorStatus: unsigned int {
+    enum class MonitorState: unsigned int {
         START = 0,
         RUNNING,
         STOP,
@@ -32,9 +32,17 @@ public:
     std::string getId() const {
         return monitorId_;
     }
+
+    std::string getName() const {
+        return name_;
+    }
+
+    std::string getStateStr() const;
+
     MonitorType getType() const {
         return type_;
     }
+
     bool isRunning() const {
         return isRunning_;
     }
@@ -54,6 +62,7 @@ private:
 
     std::string monitorId_;
     MonitorType type_;
+    MonitorState state_;
     // std::function<int(void *ctx, void *data, size_t data_sz)> buf_event_handle_;
     std::function<int(ring_buffer_sample_fn, shptrConfig)> mainLoop_;
     std::thread thread_;

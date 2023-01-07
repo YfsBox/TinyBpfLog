@@ -14,6 +14,7 @@
 class Catalog {
 public:
     friend class ClassForTest;
+    static const size_t MONITOR_ID_LEN = 16;
     using MonitorMap = std::unordered_map<std::string, std::unique_ptr<Monitor>>;
     using MonitorTypeMap = std::unordered_map<std::string, MonitorType>;
 
@@ -28,6 +29,7 @@ public:
     bool StartMonitor(const std::string &monitorId);
     bool StopAndRemoveMonitor(const std::string &monitorId);
     Monitor *GetMonitor(const std::string &monitorId) const;
+    Monitor *GetMonitorByName(const std::string &monitorName) const;
 
 private:
     Catalog() = default;

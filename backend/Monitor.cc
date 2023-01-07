@@ -31,18 +31,20 @@ void Monitor::start() {
         thread_ = std::thread(mainLoop_, nullptr, config_);
         thread_.detach();
         isRunning_ = true;
+        state_ = MonitorState::RUNNING;
     }
 }
 
 void Monitor::stop() {
     if (isRunning_) {
         isRunning_ = false;
+        state_ = MonitorState::STOP;
         config_->SetExit(true);
     }
 }
 
 void Monitor::ShowMetadata() const {
-    printf("MonitorId: %s; Type: %u; isRunning: %d\n", monitorId_, type_, isRunning_);
+    printf("MonitorId: %s; Type: %u; isRunning: %d\n", monitorId_.c_str(), type_, isRunning_);
 }
 
 void Monitor::InitConfig() {
@@ -69,10 +71,23 @@ void Monitor::InitConfig() {
         default:
             break;
     }
+    state_ = MonitorState::STOP;
 }
 
 void Monitor::ShowConfig() {
     if (config_) {
         config_->ShowConfig();
     }
+}
+
+std::string Monitor::getStateStr() const {
+    switch (state_) {
+        case MonitorState::START:
+            return "start";
+        case MonitorState::RUNNING:
+            return "run";
+        case MonitorState::STOP:
+            return "stop";
+        }
+    return "";
 }
