@@ -10,6 +10,7 @@ func main() {
 
 	if err := client.init("127.0.0.1:12230", 10); err != nil {
 		fmt.Printf("%v: client init error\n", err)
+		os.Exit(1);
 	} // 启动client
 
 	app := InitCliApp() // 解析传入的命令,并且执行对应的回调函数

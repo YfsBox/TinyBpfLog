@@ -83,11 +83,11 @@ void Monitor::ShowConfig() {
 std::string Monitor::getStateStr() const {
     switch (state_) {
         case MonitorState::START:
-            return "start";
+            return STOP_STATE;
         case MonitorState::RUNNING:
-            return "run";
+            return RUN_STATE;
         case MonitorState::STOP:
-            return "stop";
+            return STOP_STATE;
         }
     return "";
 }

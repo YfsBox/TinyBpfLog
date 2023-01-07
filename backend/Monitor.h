@@ -10,6 +10,10 @@
 #include <unordered_map>
 #include "../bpftools/monitors.h"
 
+#define RUN_STATE "run"
+#define STOP_STATE "stop"
+#define NOTEXIST_STATE "not exist"
+
 enum class MonitorType : unsigned int {
     PROCESS = 1,
     SYSCALL,

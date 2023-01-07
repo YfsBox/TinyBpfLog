@@ -11,8 +11,14 @@
 #include <thread>
 #include "Monitor.h"
 
+#define PROCESS_TYPE "process"
+#define SYSCALL_TYPE "syscall"
+#define MOUNT_TYPE  "mount"
+#define TCPSTATE_TYPE "tcpstate"
+
 class Catalog {
 public:
+
     friend class ClassForTest;
     static const size_t MONITOR_ID_LEN = 16;
     using MonitorMap = std::unordered_map<std::string, std::unique_ptr<Monitor>>;
@@ -42,10 +48,10 @@ private:
     std::string outputFile_;
     MonitorMap monitorMap_;
     MonitorTypeMap monitorTypeMap_ = {
-            {"process", MonitorType::PROCESS},
-            {"syscall", MonitorType::SYSCALL},
-            {"mount", MonitorType::MOUNT},
-            {"tcpstate", MonitorType::TCPSTATE},
+            {PROCESS_TYPE, MonitorType::PROCESS},
+            {SYSCALL_TYPE, MonitorType::SYSCALL},
+            {MOUNT_TYPE, MonitorType::MOUNT},
+            {TCPSTATE_TYPE, MonitorType::TCPSTATE},
     };
 };
 

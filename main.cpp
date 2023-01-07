@@ -18,7 +18,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 #ifdef RUNNING_DAEMON
-    pid_t pid = fork();
+    /*pid_t pid = fork();
     if (pid == - 1) {
         // 关于输出错误信息这方面暂且保留
         return 1;
@@ -34,10 +34,11 @@ int main(int argc, char **argv) {
     }
     close(STDIN_FILENO);
     close(STDOUT_FILENO);
-    close(STDERR_FILENO);
+    close(STDERR_FILENO);*/
 
     Catalog::getInstance().Init("/tmp/logFile");
-    Server::getInstance().Init(12234);
+    Server::getInstance().Init(12230);
+    Server::getInstance().Run();
     while (true) {
         if (exit_sig) {
             break;

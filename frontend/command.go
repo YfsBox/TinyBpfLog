@@ -172,7 +172,7 @@ func InitCliApp() *cli.App {
 	app.Commands = cli.Commands{
 		InitCommand,
 		RunCommand,
-		SetCommand,
+		SetCommand, // set是比较难搞的
 		StopCommand,
 		LookupCommand,
 		PsCommand,

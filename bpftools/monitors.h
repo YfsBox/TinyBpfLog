@@ -79,7 +79,7 @@ private:
     Enable pidenable_;
     Enable commenable_;
     std::set<int> pidWhiteSet_;
-    std::set<std::string> commWhiteSet_;
+    std::set<std::string> commWhiteSet_;        //2
 };
 
 class MountConfig: public Config {
@@ -113,7 +113,7 @@ private:
     std::set<uint16_t> pidWhiteSet_;
     std::set<std::string> commWhiteSet_;
     std::set<std::string> destWhiteSet_;
-    std::set<std::string> srcWhiteSet_;
+    std::set<std::string> srcWhiteSet_;         // 4
 };
 
 class TcpStateConfig: public Config {
@@ -158,7 +158,7 @@ private:
     std::set<unsigned __int128> saddrWhiteSet_;
     std::set<uint32_t> pidWhiteSet_;
     std::set<uint16_t> sportWhiteSet_;
-    std::set<uint16_t> dportWhiteSet_;
+    std::set<uint16_t> dportWhiteSet_;          // 4
 };
 
 using shptrProcessConfig = std::shared_ptr<ProcessConfig>;
